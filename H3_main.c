@@ -18,11 +18,11 @@ int main(){
 	int m_max, n_max;
 	double lambda;
 	double epsilon0;
-	double l, lInv;
+	double l, l_inv;
 	double d;
 	double r, r_c, r_plus, r_minus;
 	double phi;
-	double x, y, xInt;
+	double x, y, dx;
 	int grid_size, grid_midpoint;
 	double error;
 	double h_sq;
@@ -33,13 +33,13 @@ int main(){
 	lambda = 1;
 	epsilon0 = 1;
 	l = 1;
-	lInv = 1/l;
+	l_inv = 1/l;
 	d = 0.2 * l;
 	r_c = l/2;
 	r_plus = r_c + d / 2.0;
 	r_minus = r_c - d / 2.0;
 	y = l / 2;
-	xInt = 0.0001;
+	dx = 0.0001;
 	grid_size = 11; //Smallest grid size: 11x11, next smallest grid size: 21x21
 	grid_midpoint = (grid_size -1)/2;
 	error = 1.0;
@@ -78,11 +78,11 @@ int main(){
 	file = fopen("phi10.data","w");
 
 	// Get phi
-	for(x = 0; x < l; x += xInt){
+	for(x = 0; x < l; x += dx){
 		phi = 0;
 		for (m = 1; m < m_max + 1; m++){
 			for (n = 1; n < n_max + 1; n++){
-				phi += (double) pow(-1, m + n) * sin(PI * m * d * lInv) * sin(2.0 * PI * m * x * lInv) * sin(PI * (2.0 * n - 1) * y * lInv) / ((2.0 * 2.0 * m * m) + pow(2 * n - 1, 2));
+				phi += (double) pow(-1, m + n) * sin(PI * m * d * l_inv) * sin(2.0 * PI * m * x * l_inv) * sin(PI * (2.0 * n - 1) * y * l_inv) / ((2.0 * 2.0 * m * m) + pow(2 * n - 1, 2));
 			}
 		}
 
@@ -129,14 +129,13 @@ int main(){
 	fclose(file2);
 
 	// Free allocated memory DOES NOT WORK
-	
-	for(i = 0; i < grid_size; i++){
+	/*for(i = 0; i < grid_size; i++){
 			free(u1[i]); 
 			free(u2[i]); 
 			free(temp[i]);
 	}
 
-	free(u1); free(u2); free(temp);
+	free(u1); free(u2); free(temp);*/
 
 	u1 = NULL; u2 = NULL; temp = NULL;
 
