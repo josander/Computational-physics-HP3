@@ -129,14 +129,14 @@ int main(){
 	fclose(file2);
 
 	// Free allocated memory DOES NOT WORK
-	/*
+	
 	for(i = 0; i < grid_size; i++){
 			free(u1[i]); 
 			free(u2[i]); 
 			free(temp[i]);
 	}
 
-	free(u1); free(u2); free(temp);*/
+	free(u1); free(u2); free(temp);
 
 	u1 = NULL; u2 = NULL; temp = NULL;
 
