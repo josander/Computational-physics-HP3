@@ -16,12 +16,8 @@ Main program for task 1 in HP3b. To compile this main-program, make sure to chan
 int main(){
 
 	// Declaration of variables
-	int i, j, m, n;
+	int i, j;
 	double l;
-	double d;
-	double r;
-	double phi;
-	double x, y, dx;
 	int max_grid_size, grid_size, grid_midpoint; // error and temp gridsize
 	double error, it_error;
 	double h_sq;
@@ -29,8 +25,6 @@ int main(){
 	// Initiation of variables
 	error = 1.0; 
 	l = 1;
-	d = 0.2 * l;
-	y = l / 2;
 	max_grid_size = 21; // Maximal grid size used in the simulation
 	grid_size = 21; // Smallest grid size: 11x11, next smallest grid size: 21x21 (Dynamic variable)
 	grid_midpoint = (grid_size -1)/2;
@@ -61,10 +55,6 @@ int main(){
 			
 		}
 	}
-
-
-
-	/* TASK 1 */
 
 	// File to save data
 	FILE *file;
@@ -136,7 +126,7 @@ int main(){
 	// Close file
 	fclose(file);
 
-	// Free allocated memory DOES NOT WORK
+	// Free allocated memory
 	for(i = 0; i < grid_size; i++){
 			free(u[i]); 
 			free(res_error[i]); 

@@ -1,7 +1,7 @@
 /*
- H3_main_task1.c
+ H3_main_task2.c
 
-Main program for task 1 in HP3b. To compile this main-program, make sure to change the makefile. 
+Main program for task 2 in HP3b. To compile this main-program, make sure to change the makefile. 
 
  */
 
