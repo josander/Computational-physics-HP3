@@ -25,7 +25,7 @@ int main(){
 	double r, r_c, r_plus, r_minus;
 	double phi;
 	double x, y, dx;
-	int max_grid_size, grid_size, grid_midpoint, e_grid_size, t_grid_size; // error and temp gridsize
+	int max_grid_size, grid_size, grid_midpoint; // error and temp gridsize
 	double error, itError;
 	double h_sq;
 
@@ -99,31 +99,23 @@ int main(){
 			// Use Gauss-Seidel method, returns the error
 			error = gauss_seidel(u, grid_size);
 
-
 		}
 
+		// Compute residual
+		get_residual(u, residual, grid_size);
 
-
-		
-		get_residual(temp, residual, grid_size);
 		// Restrict to coarser grid
-		
-		t_grid_size = grid_size;
-		t_grid_size = decrease_grid(residual, t_grid_size);
-		//grid_size = increase_grid(u, grid_size); // Only for tests
-
+		grid_size = decrease_grid(residual, grid_size);
 
 		// Solve the residual equation exactly
-
 		itError = 1.0;		
-		
-		e_grid_size = t_grid_size;
+
 		while(itError > 0.000001){
-			itError = get_error(residual, rError, e_grid_size);
+			itError = get_error(residual, rError, grid_size);
 		}
 
 	
-		e_grid_size = increase_grid(rError, e_grid_size);
+		grid_size = increase_grid(rError, grid_size);
 		
 		// Interpolate
 		for(i = 0; i < grid_size; i++){
