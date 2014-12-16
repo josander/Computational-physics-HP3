@@ -68,8 +68,8 @@ void get_residual(double **grid, double **res, int grid_size){
 		}
 	}
 	//Add the chargedist 
-	res[(grid_size -1)/2)*4/5][(grid_size -1)/2] += -h_inv_sq;  
-	res[(grid_size -1)/2)*6/5][(grid_size -1)/2] += h_inv_sq;
+	res[((grid_size -1)/2)*4/5][(grid_size -1)/2] += -h_inv_sq;  
+	res[((grid_size -1)/2)*6/5][(grid_size -1)/2] += h_inv_sq;
 
 
 }
@@ -84,18 +84,19 @@ double get_error(double **res, double **error, int grid_size){
 	//GS
 	for(i = 1; i < grid_size - 1; i++){
 		for(j = 1; j < grid_size - 1; j++){
-			temp = error[i][j]
+			temp = error[i][j];
 			error[i][j] = 0.25 * (error[i+1][j] + error[i-1][j] + error[i][j+1] + error[i][j-1] - h_sq*res[i][j] );
 
-		// Calculate maximal error
-		if(fabs(error[i][j] - temp) > itError){
-			error = (fabs(error[i][j] - temp);
-
-			
+			// Calculate maximal error
+			if(fabs(error[i][j] - temp) > itError){
+				itError = fabs(error[i][j] - temp);
+		
+			}		
 		}
 	}
 	//Add the charge
-	return(itError);
+	
+return(itError);
 
 
 }
