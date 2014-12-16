@@ -88,7 +88,8 @@ int main(){
 		for(i = 0; i < 3; i++){
 
 			// Use Gauss-Seidel method, returns the error
-			error = gauss_seidel(u1, u2, grid_size, h_sq);
+			error = gauss_seidel(u1, u2, grid_size);
+
 
 			// Change pointers
 			temp = u1; 
@@ -109,7 +110,8 @@ int main(){
 		for(i = 0; i < 3; i++){
 
 			// Use Gauss-Seidel method, returns the error
-			error = gauss_seidel(u1, u2, grid_size, h_sq);
+			error = gauss_seidel(u1, u2, grid_size);
+
 
 			// Change pointers
 			temp = u1; 
