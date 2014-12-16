@@ -28,14 +28,14 @@ double gauss_seidel(double **A, double **B, int grid_size){
 	for(i = 1; i < grid_size - 1; i++){
 		for(j = 1; j < grid_size - 1; j++){
 			
-			temp = u[i][j];
+			temp = A[i][j];
 			A[i][j] = 0.25 * (A[i+1][j] + A[i-1][j] + A[i][j+1] + A[i][j-1]) - h_inv_sq*B[i][j];
 			
 
 
 			// Calculate maximal error
-			if(fabs(u[i][j] - temp) > itError){
-				itError = fabs(u[i][j] - temp);
+			if(fabs(A[i][j] - temp) > itError){
+				itError = fabs(A[i][j] - temp);
 			}
 		}
 	}
@@ -47,18 +47,18 @@ void get_residual(double **A, double **B , double **res,int grid_size){
 
 	int i,j;
 	double h_inv_sq = pow(1.0/(grid_size - 1),2);
+
 	for(i = 1; i < grid_size - 1; i++){
 		for(j = 1; j < grid_size - 1; j++){
-		// -LAP(PHI)
+
+			// B-LAP(A)
 			res[i][j] = 4*A[i][j] - A[i + 1][j] - A[i - 1][j] -A[i][j + 1] - A[i][j - 1];
-				
 			res[i][j] *= h_inv_sq;
-			res[i][j] += B[i][j]
+			res[i][j] += B[i][j];
 
 		}
 
 	}
-	
 
 }
 // Function that iterates GS to solve the R-eq  LAP(E) = R 
@@ -112,18 +112,14 @@ int increase_grid(double **A, int grid_size){
 			temp[2*i][2*j+1] = 0.5 * (A[i][j] + A[i][j+1]);
 			temp[2*i+1][2*j] = 0.5 * (A[i+1][j] + A[i][j]); 
 			temp[2*i+1][2*j+1] = 0.25 * (A[i][j] + A[i+1][j+1] + A[i][j+1] + A[i+1][j]);
-
 		}
 	}
-
-
 
 	// Write the temp-array to the original array
 	for(i = 0; i < new_grid_size; i++){
 		for(j = 0; j < new_grid_size; j++){
 			A[i][j] = temp[i][j];
 		}
-
 	}
 
 	return new_grid_size;
@@ -163,46 +159,48 @@ int decrease_grid(double **A, int grid_size){
 
 }
 
-// solves LAP(A) = B 
+// Solves the Poisson equation LAP(A) = B through the multigrid method 
 void multigrid(double **A, double **B, int grid_size, int gamma){
 	
 	double error = 1.0;
 	int i,j;
 	int n_smooth = 3;
 
-	// Initiate residual and the soultion to the r-eq
+	// Declaration of arrays
 	double** res;
 	double** res_error;
 
 	res = (double**) malloc(grid_size * sizeof(double*));
 	res_error = (double**) malloc(grid_size * sizeof(double*));
+
 	for(i = 0; i < grid_size; i++){
 		res[i] = (double*) malloc(grid_size * sizeof(double));
 		res_error[i] = (double*) malloc(grid_size * sizeof(double));
 
 	}
 		
+	// Initiate arrays
 	for(i = 0; i < grid_size; i++){
 		for(j = 0; j < grid_size; j++){
 			res[i][j] = 0.0;
 			res_error[i][j] = 0.0;
-			
 		}
 	}
 
-
-	
+	// If the most coarse grid, solve the equation exactly 
 	if (grid_size == MINGRID){
 		while (error >= pow(10,-5)){		
 			error = gauss_seidel(A, B, grid_size);
 		}
-	}else{
+	}else{ // If a finer grid than the most coarse
+
 		// Presmooth A
 		for(i = 0; i < n_smooth; i++){
 			error = gauss_seidel(A, B, grid_size);	
 		}
 		// Calculate the residual
-		get_residual(A, res ,B ,grid_size);
+		get_residual(A, res, B, grid_size);
+
 		// Decrase the grid_size of res
 		grid_size = decrease_grid(res, grid_size);
 		
@@ -211,24 +209,24 @@ void multigrid(double **A, double **B, int grid_size, int gamma){
 			multigrid(res_error, res, grid_size, gamma);
 		}
 
-		//Increas res_error to original size of A 
+		// Increas res_error to original size of A 
 		grid_size = increase_grid(res_error, grid_size);
 
-		// Update A
+		// Update A with the error
 		for(i = 0; i < grid_size; i++){
 			for(j = 0; j < grid_size; j++){
 				A[i][j] += res_error[i][j];
 			}
 		}
-		// Postsmooth of A
+
+		// Postsmooth A
 		for(i = 0; i < n_smooth; i++){
 			error = gauss_seidel(A, B, grid_size);	
 		}
 
-		
-
 	}
 
+	// Free allocated memory
 	for(i = 0; i < grid_size; i++){
 		free(res[i]); 
 		free(res_error[i]); 
