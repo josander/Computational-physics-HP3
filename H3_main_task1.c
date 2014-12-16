@@ -104,7 +104,7 @@ int main(){
 
 
 		
-		get_residual(temp, residual, grid_size);
+		get_residual(u, residual, grid_size);
 		// Restrict to coarser grid
 		
 		t_grid_size = grid_size;
@@ -117,9 +117,9 @@ int main(){
 		itError = 1.0;		
 		
 		e_grid_size = t_grid_size;
-		while(itError > 0.000001){
+		while(itError > 0.00000001){
 			itError = get_error(residual, rError, e_grid_size);
-			//	printf("%.10f \n", itError );
+				//printf("%.10f \n", itError );
 
 		}
 
@@ -143,7 +143,7 @@ int main(){
 
 
 		}
-	//	printf("%f \n", error );
+		//printf("%f \n", error );
 	
 	}
 	// Print the final solution to a file
