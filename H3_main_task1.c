@@ -35,26 +35,32 @@ int main(){
 	double** res_error; //Error given by LAP(res_error) = res
 	double** residual;
 	double** temp;
+	double** rho;
 
-	u = (double**) malloc(grid_size * sizeof(double*));
-	res_error = (double**) malloc(grid_size * sizeof(double*));
-	residual = (double**) malloc(grid_size * sizeof(double*));
-	temp = (double**) malloc(grid_size * sizeof(double*));
+	u = (double**) malloc(max_grid_size * sizeof(double*));
+	res_error = (double**) malloc(max_grid_size * sizeof(double*));
+	residual = (double**) malloc(max_grid_size * sizeof(double*));
+	temp = (double**) malloc(max_grid_size * sizeof(double*));
+	rho = (double**) malloc(max_grid_size * sizeof(double*));
 
-	for(i = 0; i < grid_size; i++){
-		u[i] = (double*) malloc(grid_size * sizeof(double));
-		res_error[i] = (double*) malloc(grid_size * sizeof(double));
-		residual[i] = (double*) malloc(grid_size * sizeof(double));
-		temp[i] = (double*) malloc(grid_size * sizeof(double));
+	for(i = 0; i < max_grid_size; i++){
+		u[i] = (double*) malloc(max_grid_size * sizeof(double));
+		res_error[i] = (double*) malloc(max_grid_size * sizeof(double));
+		residual[i] = (double*) malloc(max_grid_size * sizeof(double));
+		temp[i] = (double*) malloc(max_grid_size * sizeof(double));
+		rho[i] = (double*) malloc(max_grid_size * sizeof(double));
 	}
 
 	// Initiation of arrays
-	for(i = 0; i < grid_size; i++){
-		for(j = 0; j < grid_size; j++){
+	for(i = 0; i < max_grid_size; i++){
+		for(j = 0; j < max_grid_size; j++){
 			u[i][j] = 0.0;
-			
+			rho[i][j] = 0.0;			
 		}
 	}
+
+	rho[grid_midpoint*4/5][grid_midpoint] = 1;
+	rho[grid_midpoint*6/5][grid_midpoint] = -1;
 
 	// File to save data
 	FILE *file;
@@ -63,7 +69,7 @@ int main(){
 	// Until error < 10^(-5)
 	while(error >= pow(10,-5)){
 
-		// Put the res and res_error to 0 at each iteration
+		// Put the res and res_error to zero at each iteration
 		for(i = 0; i < grid_size; i++){
 			for(j = 0; j < grid_size; j++){
 				res_error[i][j] = 0.0;
@@ -72,11 +78,11 @@ int main(){
 			}
 		}
 
-		// Use Gauss-Seidel method to iterate three times
+		// Iterate Gauss-Seidel relaxation three times
 		for(i = 0; i < 3; i++){
 
 			// Use Gauss-Seidel method, returns the error
-			error = gauss_seidel(u, grid_size);
+			error = gauss_seidel(u, rho, grid_size);
 
 		}
 
@@ -107,7 +113,7 @@ int main(){
 		for(i = 0; i < 3; i++){
 
 			// Use Gauss-Seidel method, returns the error
-			error = gauss_seidel(u, grid_size);
+			error = gauss_seidel(u, rho, grid_size);
 
 		}
 	
