@@ -99,33 +99,27 @@ int main(){
 			error = gauss_seidel(u, grid_size);
 
 
-
-
 		}
 
 
 
-		for(i = 0; i < grid_size; i++){
-			for(j = 0; j < grid_size; j++){
-				temp[i][j] = u[i][j];
-
-			}
-		}
+		
+		get_residual(temp, residual, grid_size);
 		// Restrict to coarser grid
 		
 		t_grid_size = grid_size;
-		t_grid_size = decrease_grid(temp, t_grid_size);
+		t_grid_size = decrease_grid(residual, t_grid_size);
 		//grid_size = increase_grid(u, grid_size); // Only for tests
 
 
 		// Solve the residual equation exactly
-		get_residual(temp, residual, t_grid_size);
+
 		itError = 1.0;		
 		
 		e_grid_size = t_grid_size;
 		while(itError > 0.000001){
 			itError = get_error(residual, rError, e_grid_size);
-				printf("%1.10f \n", itError );
+			//	printf("%.10f \n", itError );
 
 		}
 
@@ -149,9 +143,9 @@ int main(){
 
 
 		}
-		//printf("%f \n", error );
+	//	printf("%f \n", error );
+	
 	}
-
 	// Print the final solution to a file
 	for(i = 0; i < grid_size; i++){
 		for(j = 0; j < grid_size; j++){
