@@ -11,9 +11,10 @@ gird_size = N*10 + 1
 #include <stdio.h>
 #include <math.h>
 #define PI 3.141592653589
+#define MINGRID 11
 
 // Function for the Gauss-Seidel method. Returns the maximal error and calculates the next iteration. 
-double gauss_seidel(double **u, int grid_size){
+double gauss_seidel(double **A, double **B, int grid_size){
 
 	
 	int i, j;
@@ -28,23 +29,8 @@ double gauss_seidel(double **u, int grid_size){
 		for(j = 1; j < grid_size - 1; j++){
 			
 			temp = u[i][j];
-			//If the point is on the dipole
-			if(j == grid_midpoint){
-				if(i == grid_midpoint*4/5){
-					u[i][j] = 0.25 * (u[i+1][j] + u[i-1][j] + u[i][j+1] + u[i][j-1]) + 1; //h_inv_sq * h_sq = 1
-				}
-				else if(i == grid_midpoint*6/5){
-					u[i][j] = 0.25 * (u[i+1][j] + u[i-1][j] + u[i][j+1] + u[i][j-1]) - 1;
-				}
-				else{
-					u[i][j] = 0.25 * (u[i+1][j] + u[i-1][j] + u[i][j+1] + u[i][j-1]);
+			A[i][j] = 0.25 * (A[i+1][j] + A[i-1][j] + A[i][j+1] + A[i][j-1]) - h_inv_sq*B[i][j];
 			
-				}
-			//  GS-algorithm
-			}else{ 
-
-				u[i][j] = 0.25 * (u[i+1][j] + u[i-1][j] + u[i][j+1] + u[i][j-1]);
-			}
 
 
 			// Calculate maximal error
@@ -57,25 +43,22 @@ double gauss_seidel(double **u, int grid_size){
 	return(itError);
 }
 //Function that calculates the residual
-void get_residual(double **grid, double **res, int grid_size){
+void get_residual(double **A, double **B , double **res,int grid_size){
 
 	int i,j;
 	double h_inv_sq = pow(1.0/(grid_size - 1),2);
 	for(i = 1; i < grid_size - 1; i++){
 		for(j = 1; j < grid_size - 1; j++){
 		// -LAP(PHI)
-			res[i][j] = 4*grid[i][j] - grid[i + 1][j] - grid[i - 1][j] -grid[i][j + 1] - grid[i][j - 1];
+			res[i][j] = 4*A[i][j] - A[i + 1][j] - A[i - 1][j] -A[i][j + 1] - A[i][j - 1];
 				
 			res[i][j] *= h_inv_sq;
+			res[i][j] += B[i][j]
 
 		}
 
 	}
 	
-	//Add the chargedist 
-	res[((grid_size -1)/2)*4/5][(grid_size -1)/2] += -h_inv_sq;  
-	res[((grid_size -1)/2)*6/5][(grid_size -1)/2] += h_inv_sq;
-
 
 }
 // Function that iterates GS to solve the R-eq  LAP(E) = R 
@@ -178,5 +161,80 @@ int decrease_grid(double **A, int grid_size){
 
 	return new_grid_size;
 
+}
+
+// solves LAP(A) = B 
+void multigrid(double **A, double **B, int grid_size, int gamma){
+	
+	double error = 1.0;
+	int i,j;
+	int n_smooth = 3;
+
+	// Initiate residual and the soultion to the r-eq
+	double** res;
+	double** res_error;
+
+	res = (double**) malloc(grid_size * sizeof(double*));
+	res_error = (double**) malloc(grid_size * sizeof(double*));
+	for(i = 0; i < grid_size; i++){
+		res[i] = (double*) malloc(grid_size * sizeof(double));
+		res_error[i] = (double*) malloc(grid_size * sizeof(double));
+
+	}
+		
+	for(i = 0; i < grid_size; i++){
+		for(j = 0; j < grid_size; j++){
+			res[i][j] = 0.0;
+			res_error[i][j] = 0.0;
+			
+		}
+	}
+
+
+	
+	if (grid_size == MINGRID){
+		while (error >= pow(10,-5)){		
+			error = gauss_seidel(A, B, grid_size);
+		}
+	}else{
+		// Presmooth A
+		for(i = 0; i < n_smooth; i++){
+			error = gauss_seidel(A, B, grid_size);	
+		}
+		// Calculate the residual
+		get_residual(A, res ,B ,grid_size);
+		// Decrase the grid_size of res
+		grid_size = decrease_grid(res, grid_size);
+		
+		// Recursive solution to the residual equation
+		for(i = 0; i < gamma; i++){
+			multigrid(res_error, res, grid_size, gamma);
+		}
+
+		//Increas res_error to original size of A 
+		grid_size = increase_grid(res_error, grid_size);
+
+		// Update A
+		for(i = 0; i < grid_size; i++){
+			for(j = 0; j < grid_size; j++){
+				A[i][j] += res_error[i][j];
+			}
+		}
+		// Postsmooth of A
+		for(i = 0; i < n_smooth; i++){
+			error = gauss_seidel(A, B, grid_size);	
+		}
+
+		
+
+	}
+
+	for(i = 0; i < grid_size; i++){
+		free(res[i]); 
+		free(res_error[i]); 
+	}
+
+	free(res); free(res_error);
+	res = NULL; res_error = NULL;
 }
 

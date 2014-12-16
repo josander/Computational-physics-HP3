@@ -89,11 +89,13 @@ int main(){
 		// Compute residual
 		get_residual(u, residual, grid_size);
 
+
 		// Restrict to coarser grid
 		grid_size = decrease_grid(residual, grid_size);
 
 		// Solve the residual equation exactly
 		it_error = 1.0;		
+
 
 		while(it_error >= 0.000001){
 			it_error = get_error(residual, res_error, grid_size);
@@ -101,6 +103,7 @@ int main(){
 
 		// Get fine grid
 		grid_size = increase_grid(res_error, grid_size);
+
 		
 		// Interpolate
 		for(i = 0; i < grid_size; i++){
@@ -116,6 +119,7 @@ int main(){
 			error = gauss_seidel(u, rho, grid_size);
 
 		}
+
 	
 	}
 
@@ -141,6 +145,7 @@ int main(){
 	}
 
 	free(u); free(res_error); free(residual); free(temp);
+
 
 	u = NULL; res_error = NULL; residual = NULL; temp = NULL;
 
