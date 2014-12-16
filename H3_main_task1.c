@@ -50,7 +50,7 @@ int main(){
 
 	// Declaration of arrays
 	double** u; 
-	double** rError;
+	double** rError; //Error given by LAP(rError) = res
 	double** temp;
 
 	u = (double**) malloc(grid_size * sizeof(double*));
@@ -107,7 +107,7 @@ int main(){
 
 
 		// Restrict to coarser grid
-		grid_size = decrease_grid(u1, grid_size);
+		grid_size = decrease_grid(u, grid_size);
 
 		// Solve the residual equation exactly
 
@@ -129,7 +129,7 @@ int main(){
 	// Print the final solution to a file
 	for(i = 0; i < grid_size; i++){
 		for(j = 0; j < grid_size; j++){
-			fprintf(file, "%f \t", u2[i][j]);
+			fprintf(file, "%f \t", u[i][j]);
 		}
 		
 		fprintf(file, "\n");
