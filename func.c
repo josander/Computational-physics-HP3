@@ -13,16 +13,16 @@ gird_size = N*10 + 1
 #define PI 3.141592653589
 #define MINGRID 11
 
-// Function for the Gauss-Seidel method. Returns the maximal error and calculates the next iteration. 
+// Function for the Gauss-Seidel method. Returns the maximal error. 
 double gauss_seidel(double **A, double **B, int grid_size){
 
 	
 	int i, j;
-	int grid_midpoint = (grid_size -1)/2;	
+	int grid_midpoint = (grid_size - 1)/2;	
 	
 	double h_inv_sq = pow(1/(grid_size - 1),2);
 	double temp;
-	double itError = 0.0;
+	double it_error = 0.0;
 
 	// Gauss-Seidel
 	for(i = 1; i < grid_size - 1; i++){
@@ -31,16 +31,14 @@ double gauss_seidel(double **A, double **B, int grid_size){
 			temp = A[i][j];
 			A[i][j] = 0.25 * (A[i+1][j] + A[i-1][j] + A[i][j+1] + A[i][j-1]) - h_inv_sq*B[i][j];
 			
-
-
 			// Calculate maximal error
-			if(fabs(A[i][j] - temp) > itError){
-				itError = fabs(A[i][j] - temp);
+			if(fabs(A[i][j] - temp) > it_error){
+				it_error = fabs(A[i][j] - temp);
 			}
 		}
 	}
 
-	return(itError);
+	return(it_error);
 }
 //Function that calculates the residual
 void get_residual(double **A, double **B , double **res,int grid_size){
@@ -68,7 +66,8 @@ double get_error(double **res, double **error, int grid_size){
 	double h_sq = pow(1.0/(grid_size - 1),2);	
 	double h_inv_sq = pow((grid_size - 1),2);
 	double temp;
-	double itError = 0.0; // NOTE: iteration error, not the solution to the R-eq
+	double it_error = 0.0; // NOTE: iteration error, not the solution to the R-eq
+
 	//GS
 	for(i = 1; i < grid_size - 1; i++){
 		for(j = 1; j < grid_size - 1; j++){
@@ -76,17 +75,14 @@ double get_error(double **res, double **error, int grid_size){
 			error[i][j] = 0.25 * (error[i+1][j] + error[i-1][j] + error[i][j+1] + error[i][j-1] - h_sq*res[i][j] );
 
 			// Calculate maximal error
-			if(fabs(error[i][j] - temp) > itError){
-				itError = fabs(error[i][j] - temp);
+			if(fabs(error[i][j] - temp) > it_error){
+				it_error = fabs(error[i][j] - temp);
 		
 			}		
 		}
-
 	}
 
-	
-return(itError);
-
+return(it_error);
 
 }
 
@@ -201,7 +197,7 @@ void multigrid(double **A, double **B, int grid_size, int gamma){
 		// Calculate the residual
 		get_residual(A, res, B, grid_size);
 
-		// Decrase the grid_size of res
+		// Decrease the grid size of res
 		grid_size = decrease_grid(res, grid_size);
 		
 		// Recursive solution to the residual equation

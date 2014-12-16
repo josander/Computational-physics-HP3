@@ -3,6 +3,13 @@
 clc
 clear all
 
+phi = dlmread('phi.data');
+
+x = linspace(0,1,length(phi));
+y = linspace(0,1,length(phi));
+
+figure(1);
+plot3(x,y,phi);
 
 
 %% Task 3

@@ -20,7 +20,7 @@ int main(){
 	double l;
 	int max_grid_size, grid_size, grid_midpoint;
 	double error, it_error;
-	double h_sq;
+	double h_inv_sq;
 	int gamma;
 
 	// Initiation of variables
@@ -29,7 +29,7 @@ int main(){
 	max_grid_size = 81; // Maximal grid size used in the simulation
 	grid_size = 21; // (Dynamic variable)
 	grid_midpoint = (grid_size - 1)/2;
-	h_sq = pow((grid_midpoint + 1)/l,2);
+	h_inv_sq = pow((grid_size-1)/l,2);
 	gamma = 2;
 
 	// Declaration of arrays
@@ -61,8 +61,8 @@ int main(){
 		}
 	}
 
-	rho[grid_midpoint*4/5][grid_midpoint] = 1;
-	rho[grid_midpoint*6/5][grid_midpoint] = -1;
+	rho[grid_midpoint*4/5][grid_midpoint] = h_inv_sq;
+	rho[grid_midpoint*6/5][grid_midpoint] = -h_inv_sq;
 
 	// File to save data
 	FILE *file;

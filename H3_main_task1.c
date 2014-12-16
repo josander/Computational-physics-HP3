@@ -120,6 +120,8 @@ int main(){
 
 		}
 
+		printf("Error: %f\n", error);
+
 	
 	}
 
@@ -144,9 +146,8 @@ int main(){
 			free(temp[i]);
 	}
 
+
 	free(u); free(res_error); free(residual); free(temp);
-
-
 	u = NULL; res_error = NULL; residual = NULL; temp = NULL;
 
 }
