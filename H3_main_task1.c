@@ -20,15 +20,15 @@ int main(){
 	double l;
 	int max_grid_size, grid_size, grid_midpoint; // error and temp gridsize
 	double error, it_error;
-	double h_sq;
+	double h_inv_sq;
 
 	// Initiation of variables
 	error = 1.0; 
-	l = 1;
+	l = 1.0;
 	max_grid_size = 21; // Maximal grid size used in the simulation
 	grid_size = 21; // Smallest grid size: 11x11, next smallest grid size: 21x21 (Dynamic variable)
 	grid_midpoint = (grid_size -1)/2;
-	h_sq = pow((grid_midpoint+1)/l,2);
+	h_inv_sq = pow((grid_size-1)/l,2);
 
 	// Declaration of arrays
 	double** u; 
@@ -59,8 +59,8 @@ int main(){
 		}
 	}
 
-	rho[grid_midpoint*4/5][grid_midpoint] = 1;
-	rho[grid_midpoint*6/5][grid_midpoint] = -1;
+	rho[grid_midpoint*4/5][grid_midpoint] = h_inv_sq;
+	rho[grid_midpoint*6/5][grid_midpoint] = -h_inv_sq;
 
 	// File to save data
 	FILE *file;
@@ -87,7 +87,7 @@ int main(){
 		}
 
 		// Compute residual
-		get_residual(u, residual, grid_size);
+		get_residual(u, rho, residual, grid_size);
 
 
 		// Restrict to coarser grid
