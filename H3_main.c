@@ -40,7 +40,7 @@ int main(){
 	r_minus = r_c - d / 2.0;
 	y = l / 2;
 	xInt = 0.0001;
-	grid_size = 81;
+	grid_size = 11; //Smallest grid size: 11x11, next smallest grid size: 21x21
 	grid_midpoint = (grid_size -1)/2;
 	error = 1.0;
 	h_sq = pow((grid_midpoint+1)/l,2);
@@ -72,7 +72,7 @@ int main(){
 	u1[grid_midpoint][grid_midpoint*4/5] = -h_sq;
 	u1[grid_midpoint][grid_midpoint*6/5] = h_sq;	
 
-	// TASK 1
+	/* TASK 1 */
 	// File to save data 
 	FILE *file;
 	file = fopen("phi10.data","w");
@@ -96,7 +96,7 @@ int main(){
 	// Close file
 	fclose(file);
 
-	// TASK 2
+	/* TASK 2 */
 	FILE *file2;
 	file2 = fopen("phi_task2.data","w");
 
