@@ -1,7 +1,7 @@
 /*
- H3_main_task1.c
+ H3_main_task2.c
 
-Main program for task 1 in HP3b. To compile this main-program, make sure to change the makefile. 
+Main program for task 2 in HP3b. To compile this main-program, make sure to change the makefile. 
 
  */
 
@@ -25,10 +25,10 @@ int main(){
 	// Initiation of variables
 	error = 1.0; 
 	l = 1;
-	max_grid_size = 21; // Maximal grid size used in the simulation
-	grid_size = 21; // Smallest grid size: 11x11, next smallest grid size: 21x21 (Dynamic variable)
-	grid_midpoint = (grid_size -1)/2;
-	h_sq = pow((grid_midpoint+1)/l,2);
+	max_grid_size = 81; // Maximal grid size used in the simulation
+	grid_size = 21; // (Dynamic variable)
+	grid_midpoint = (grid_size - 1)/2;
+	h_sq = pow((grid_midpoint + 1)/l,2);
 
 	// Declaration of arrays
 	double** u; 
@@ -69,7 +69,7 @@ int main(){
 	// Until error < 10^(-5)
 	while(error >= pow(10,-5)){
 
-		// Put the res and res_error to zero at each iteration
+		// Put the res and res_error to 0 at each iteration
 		for(i = 0; i < grid_size; i++){
 			for(j = 0; j < grid_size; j++){
 				res_error[i][j] = 0.0;
@@ -78,7 +78,7 @@ int main(){
 			}
 		}
 
-		// Iterate Gauss-Seidel relaxation three times
+		// Use Gauss-Seidel method to iterate three times
 		for(i = 0; i < 3; i++){
 
 			// Use Gauss-Seidel method, returns the error
@@ -89,13 +89,11 @@ int main(){
 		// Compute residual
 		get_residual(u, residual, grid_size);
 
-
 		// Restrict to coarser grid
 		grid_size = decrease_grid(residual, grid_size);
 
 		// Solve the residual equation exactly
 		it_error = 1.0;		
-
 
 		while(it_error >= 0.000001){
 			it_error = get_error(residual, res_error, grid_size);
@@ -103,7 +101,6 @@ int main(){
 
 		// Get fine grid
 		grid_size = increase_grid(res_error, grid_size);
-
 		
 		// Interpolate
 		for(i = 0; i < grid_size; i++){
@@ -119,7 +116,6 @@ int main(){
 			error = gauss_seidel(u, rho, grid_size);
 
 		}
-
 	
 	}
 
@@ -145,7 +141,6 @@ int main(){
 	}
 
 	free(u); free(res_error); free(residual); free(temp);
-
 
 	u = NULL; res_error = NULL; residual = NULL; temp = NULL;
 
