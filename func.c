@@ -15,7 +15,12 @@ double gauss_seidel(double **u_new, double **u_old, int grid_size, double h_sq){
 	
 	int i, j;
 	int grid_midpoint = (grid_size -1)/2;	
+<<<<<<< HEAD
 	double error = 0.0;
+=======
+	error = 0.0;
+
+>>>>>>> 0d44bc6ae1c7b4ac4444fd5c32dfc2fd3f9c745c
 	// Gauss-Seidel
 	for(i = 1; i < grid_size - 1; i++){
 		for(j = 1; j < grid_size - 1; j++){
@@ -40,13 +45,20 @@ double gauss_seidel(double **u_new, double **u_old, int grid_size, double h_sq){
 			}
 
 
-			// Calc maximal error
+			// Calculate maximal error
 			if(fabs(u_new[i][j] - u_old[i][j]) > error){
 				error = fabs(u_new[i][j] - u_old[i][j]);
 			}
 		}
 	}
-	return(error);
 
+	return(error);
+}
+
+double get_residual(){
+
+	double residual = 0;
+
+	return residual;
 }
 
