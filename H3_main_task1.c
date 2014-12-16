@@ -137,13 +137,14 @@ int main(){
 	fclose(file);
 
 	// Free allocated memory DOES NOT WORK
-	/*for(i = 0; i < grid_size; i++){
-			free(u1[i]); 
-			free(u2[i]); 
+	for(i = 0; i < grid_size; i++){
+			free(u[i]); 
+			free(res_error[i]); 
+			free(residual[i]); 
 			free(temp[i]);
 	}
 
-	free(u1); free(u2); free(temp);*/
+	free(u); free(res_error); free(residual); free(temp);
 
 	u = NULL; res_error = NULL; residual = NULL; temp = NULL;
 
