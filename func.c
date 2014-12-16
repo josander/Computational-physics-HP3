@@ -131,21 +131,16 @@ int increase_grid(double **A, int grid_size){
 			temp[2*i+1][2*j+1] = 0.25 * (A[i][j] + A[i+1][j+1] + A[i][j+1] + A[i+1][j]);
 
 		}
-		//printf("\n");
 	}
 
-			//printf("%f\t", temp[15][1]);
+
 
 	// Write the temp-array to the original array
 	for(i = 0; i < new_grid_size; i++){
 		for(j = 0; j < new_grid_size; j++){
-		//	printf("%f ", temp[i][j]);
-
 			A[i][j] = temp[i][j];
-
-
 		}
-		//printf("\n");
+
 	}
 
 	return new_grid_size;
