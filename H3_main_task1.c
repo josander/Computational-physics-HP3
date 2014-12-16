@@ -38,18 +38,18 @@ int main(){
 
 	// Declaration of arrays
 	double** u; 
-	double** rError; //Error given by LAP(rError) = res
+	double** res_error; //Error given by LAP(res_error) = res
 	double** residual;
 	double** temp;
 
 	u = (double**) malloc(grid_size * sizeof(double*));
-	rError = (double**) malloc(grid_size * sizeof(double*));
+	res_error = (double**) malloc(grid_size * sizeof(double*));
 	residual = (double**) malloc(grid_size * sizeof(double*));
 	temp = (double**) malloc(grid_size * sizeof(double*));
 
 	for(i = 0; i < grid_size; i++){
 		u[i] = (double*) malloc(grid_size * sizeof(double));
-		rError[i] = (double*) malloc(grid_size * sizeof(double));
+		res_error[i] = (double*) malloc(grid_size * sizeof(double));
 		residual[i] = (double*) malloc(grid_size * sizeof(double));
 		temp[i] = (double*) malloc(grid_size * sizeof(double));
 	}
@@ -73,10 +73,10 @@ int main(){
 	// Until error < 10^(-5)
 	while(error >= pow(10,-5)){
 
-		// Put the res and rError to 0 at each iteration
+		// Put the res and res_error to 0 at each iteration
 		for(i = 0; i < grid_size; i++){
 			for(j = 0; j < grid_size; j++){
-				rError[i][j] = 0.0;
+				res_error[i][j] = 0.0;
 				residual[i][j] = 0.0;
 				temp[i][j] = 0.0;
 			}
@@ -101,19 +101,18 @@ int main(){
 		it_error = 1.0;		
 
 
-		while(it_error > 0.000001){
-			it_error = get_error(residual, rError, grid_size);
+		while(it_error >= 0.000001){
+			it_error = get_error(residual, res_error, grid_size);
 		}
 
+		// Get fine grid
+		grid_size = increase_grid(res_error, grid_size);
 
-	
-		grid_size = increase_grid(rError, grid_size);
 		
 		// Interpolate
 		for(i = 0; i < grid_size; i++){
 			for(j = 0; j < grid_size; j++){
-				u[i][j] += rError[i][j];
-				
+				u[i][j] += res_error[i][j];
 			}
 		}
 
@@ -127,6 +126,7 @@ int main(){
 
 	
 	}
+
 	// Print the final solution to a file
 	for(i = 0; i < grid_size; i++){
 		for(j = 0; j < grid_size; j++){
@@ -141,14 +141,17 @@ int main(){
 	fclose(file);
 
 	// Free allocated memory DOES NOT WORK
-	/*for(i = 0; i < grid_size; i++){
-			free(u1[i]); 
-			free(u2[i]); 
+	for(i = 0; i < grid_size; i++){
+			free(u[i]); 
+			free(res_error[i]); 
+			free(residual[i]); 
 			free(temp[i]);
 	}
 
-	free(u1); free(u2); free(temp);*/
+	free(u); free(res_error); free(residual); free(temp);
 
-	u = NULL; rError = NULL; residual = NULL; 
+
+	u = NULL; res_error = NULL; residual = NULL; temp = NULL;
+
 }
 
