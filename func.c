@@ -9,17 +9,19 @@ Contains functions for homeproblem 3/b
 #include <math.h>
 #define PI 3.141592653589
 
-// Function for the Gauss-Seidel method. Returns the maximal error
-double gauss_seidel(double **u_new, double **u_old, int grid_size, double error, double h_sq){
+// Function for the Gauss-Seidel method. Returns the maximal error and calculates the next iteration. 
+double gauss_seidel(double **u_new, double **u_old, int grid_size, double h_sq){
 
 	
 	int i, j;
 	int grid_midpoint = (grid_size -1)/2;	
-	error = 0.0;
+	double error = 0.0;
 	// Gauss-Seidel
 	for(i = 1; i < grid_size - 1; i++){
 		for(j = 1; j < grid_size - 1; j++){
 			
+
+			//If the point is on the dipole
 			if(j == grid_midpoint){
 				if(i == grid_midpoint*4/5){
 					u_new[i][j] = -h_sq;
@@ -31,6 +33,7 @@ double gauss_seidel(double **u_new, double **u_old, int grid_size, double error,
 					u_new[i][j] = 0.25 * (u_old[i+1][j] + u_new[i-1][j] + u_old[i][j+1] + u_new[i][j-1]);
 			
 				}
+			// Else, iterate GS-algorithm
 			}else{ 
 
 				u_new[i][j] = 0.25 * (u_old[i+1][j] + u_new[i-1][j] + u_old[i][j+1] + u_new[i][j-1]);
