@@ -83,6 +83,9 @@ int main(){
 
 		// Use Gauss-Seidel method to iterate three times
 		for(i = 0; i < 3; i++){
+		// Use Gauss-Seidel method, returns the error
+		error = gauss_seidel(u1, u2, grid_size, h_sq);
+
 
 			// Use Gauss-Seidel method, returns the error
 			error = gauss_seidel(u1, u2, grid_size, error, h_sq);
