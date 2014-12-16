@@ -46,31 +46,29 @@ int main(){
 	h_sq = pow((grid_midpoint+1)/l,2);
 
 	// Declaration of arrays
-	double** u1; 
-	double** u2;
+	double** u; 
+	double** rError;
 	double** temp;
-	u1 = (double**) malloc(grid_size * sizeof(double*));
-	u2 = (double**) malloc(grid_size * sizeof(double*));
+	u = (double**) malloc(grid_size * sizeof(double*));
+	rError = (double**) malloc(grid_size * sizeof(double*));
 	temp = (double**) malloc(grid_size * sizeof(double*));
 
 	for(i = 0; i < grid_size; i++){
-		u1[i] = (double*) malloc(grid_size * sizeof(double));
-		u2[i] = (double*) malloc(grid_size * sizeof(double));
+		u[i] = (double*) malloc(grid_size * sizeof(double));
+		rError[i] = (double*) malloc(grid_size * sizeof(double));
 		temp[i] = (double*) malloc(grid_size * sizeof(double));
 	}
 
 	// Initiation of arrays
 	for(i = 0; i < grid_size; i++){
 		for(j = 0; j < grid_size; j++){
-			u1[i][j] = 0.0;
-			u2[i][j] = 0.0;
+			u[i][j] = 0.0;
+			rError[i][j] = 0.0;
 			temp[i][j] = 0.0;
 		}
 	}
 
-	// Initiate arrays with a dipole
-	u1[grid_midpoint][grid_midpoint*4/5] = -h_sq;
-	u1[grid_midpoint][grid_midpoint*6/5] = h_sq;	
+
 
 	/* TASK 1 */
 
@@ -85,18 +83,16 @@ int main(){
 		for(i = 0; i < 3; i++){
 
 			// Use Gauss-Seidel method, returns the error
-			error = gauss_seidel(u1, u2, grid_size);
+			error = gauss_seidel(u, grid_size);
 
 			// Change pointers
-			temp = u1; 
-			u1 = u2;
-			u2 = temp;
+
 		}
 
 		// Print the final solution to a file
 		for(i = 0; i < grid_size; i++){
 			for(j = 0; j < grid_size; j++){
-				fprintf(file, "%f \t", u2[i][j]);
+				fprintf(file, "%f \t", u[i][j]);
 			}
 		
 			fprintf(file, "\n");
@@ -113,12 +109,10 @@ int main(){
 		for(i = 0; i < 3; i++){
 
 			// Use Gauss-Seidel method, returns the error
-			error = gauss_seidel(u1, u2, grid_size);
+			error = gauss_seidel(u, grid_size);
 
 			// Change pointers
-			temp = u1; 
-			u1 = u2;
-			u2 = temp;
+
 		}
 
 	}
@@ -135,7 +129,7 @@ int main(){
 
 	free(u1); free(u2); free(temp);*/
 
-	u1 = NULL; u2 = NULL; temp = NULL;
+	u = NULL; rError = NULL; temp = NULL;
 
 }
 
