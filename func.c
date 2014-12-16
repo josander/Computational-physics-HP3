@@ -10,12 +10,13 @@ Contains functions for homeproblem 3/b
 #define PI 3.141592653589
 
 // Function for the Gauss-Seidel method. Returns the maximal error and calculates the next iteration. 
-double gauss_seidel(double **u_new, double **u_old, int grid_size, double h_sq){
+double gauss_seidel(double **u_new, double **u_old, int grid_size){
 
 	
 	int i, j;
 	int grid_midpoint = (grid_size -1)/2;	
 	double error = 0.0;
+	double h_sq = pow(1/(grid_size - 1),2);
 
 	// Gauss-Seidel
 	for(i = 1; i < grid_size - 1; i++){
@@ -51,10 +52,22 @@ double gauss_seidel(double **u_new, double **u_old, int grid_size, double h_sq){
 	return(error);
 }
 
-double get_residual(){
+void get_residual(double **grid, double **res, int grid){
 
-	double residual = 0;
+	int i,j;
+	double h_sq = pow(1/(grid_size - 1),2);
 
-	return residual;
+	for(i = 1; i < grid_size - 1; i++){
+		for(j = 1; j < grid_size - 1; j++){
+		// -LAP(PHI)
+		res[i][j] = 4*grid[i][j] - grid[i + 1][j] - grid[i - 1][j] -grid[i][j + 1] - grid[i][j - 1];
+		res[i][j] *= h_sq;
+		}
+	}
+	//Add the charge
+	res[(grid_size -1)/2)*4/5][(grid_size -1)/2] += -h_sq;  
+	res[(grid_size -1)/2)*6/5][(grid_size -1)/2] += h_sq;
+
+
 }
 
