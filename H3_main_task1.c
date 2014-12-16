@@ -101,6 +101,7 @@ int main(){
 
 		// Restrict to coarser grid
 		grid_size = decrease_grid(u1, grid_size);
+		grid_size = increase_grid(u1, grid_size); // Only for tests
 
 		// Solve the residual equation exactly
 
@@ -111,7 +112,6 @@ int main(){
 
 			// Use Gauss-Seidel method, returns the error
 			error = gauss_seidel(u1, u2, grid_size);
-
 
 			// Change pointers
 			temp = u1; 

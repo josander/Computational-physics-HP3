@@ -101,13 +101,46 @@ return(itError);
 
 }
 
-// Function that increase the grid size, into a coarser grid. Returns the new grid size.
+// Function that increase the grid size, into a finer grid. Returns the new grid size.
 int increase_grid(double **A, int grid_size){
 
-	double new_grid_size = 0;
+	int i,j;
+	int new_grid_size = 2 * (grid_size - 1) + 1;
+	double temp[new_grid_size][new_grid_size];
+
+	// For all the outer points in the temp array, initialize with zeros
+	for(i = 0; i < new_grid_size; i++){
+		temp[0][i] = 0.0;
+		temp[new_grid_size - 1][i] = 0.0;
+		temp[i][0] = 0.0;
+		temp[i][new_grid_size - 1] = 0.0;
+	}
+
+	// For all grid points that equals the old grid
+	for(i = 0; i < grid_size - 1; i++){
+		for(j = 0; j < grid_size - 1; j++){
+			temp[2*i][2*j] = A[i][j];
+			temp[2*i][2*j+1] = 0.5 * (A[i][j] + A[i][j+1]);
+			temp[2*i+1][2*j] = 0.5 * (A[i+1][j] + A[i][j]); 
+			temp[2*i+1][2*i+1] = 0.25 * (A[i][j] + A[i+1][j+1] + A[i][j+1] + A[i+1][j]);
+		}
+		//printf("\n");
+	}
+
+			printf("%f\t", temp[15][1]);
+
+	// Write the temp-array to the original array
+	for(i = 0; i < new_grid_size; i++){
+		for(j = 0; j < new_grid_size; j++){
+			printf("%f\t", temp[i][j]);
+			A[i][j] = temp[i][j];
+
+			if(A[i][j] != A[i][j]) {printf("NAN: %i \t %i\t ", i,j);}
+		}
+		printf("\n");
+	}
 
 	return new_grid_size;
-
 }
 
 // Function that decreases the grid size, into a coarser grid. Returns the new grid size.
@@ -126,27 +159,17 @@ int decrease_grid(double **A, int grid_size){
 	}
 
 	// For all the inner grid points, with eight neighbours
-	for(i = 1; i < new_grid_size - 2; i++){
+	for(i = 1; i < new_grid_size - 1; i++){
 		for(j = 1; j < new_grid_size - 1; j++){
-			temp[i][j] = 0.25*A[2*i+1][2*j+1] + (A[2*i][2*j] + A[2*i][2*j+2] + A[2*i+2][2*j] + A[2*i+2][2*j+2])/16 + (A[2*i+1][2*j+2] + A[2*i+1][2*j+2] + A[2*i][2*j+1] + A[2*i+2][2*j+1])/8;
+			temp[i][j] = 0.25 * A[2*i+1][2*j+1] + (A[2*i][2*j] + A[2*i][2*j+2] + A[2*i+2][2*j] + A[2*i+2][2*j+2])/16 + (A[2*i+1][2*j+2] + A[2*i+1][2*j+2] + A[2*i][2*j+1] + A[2*i+2][2*j+1])/8;
 		}
-	}
-
-	// Only for tests
-	for(i = 0; i < grid_size; i++){
-		for(j = 0; j < grid_size; j++){
-			//printf("%f\t", A[i][j]);
-		}
-		//printf("\n");
 	}
 
 	// Write the temp-array to the original array
 	for(i = 0; i < new_grid_size; i++){
 		for(j = 0; j < new_grid_size; j++){
 			A[i][j] = temp[i][j];
-			//printf("%f\t", A[i][j]);
 		}
-		//printf("\n");
 	}
 
 	return new_grid_size;
