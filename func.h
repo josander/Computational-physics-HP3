@@ -6,5 +6,6 @@ func.h for HP3b
 #define _func_h
 
 extern double gauss_seidel(double **, double **, int, double, double);
+extern double get_residual();
 
 #endif

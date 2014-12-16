@@ -73,40 +73,16 @@ int main(){
 	u1[grid_midpoint][grid_midpoint*6/5] = h_sq;	
 
 	/* TASK 1 */
-	// File to save data 
+
+	// File to save data
 	FILE *file;
-	file = fopen("phi10.data","w");
+	file = fopen("phi.data","w");
 
-	// Get phi
-	for(x = 0; x < l; x += dx){
-		phi = 0;
-		for (m = 1; m < m_max + 1; m++){
-			for (n = 1; n < n_max + 1; n++){
-				phi += (double) pow(-1, m + n) * sin(PI * m * d * l_inv) * sin(2.0 * PI * m * x * l_inv) * sin(PI * (2.0 * n - 1) * y * l_inv) / ((2.0 * 2.0 * m * m) + pow(2 * n - 1, 2));
-			}
-		}
-
-		phi *= (- 2.0 * lambda * 2 * 2 / (epsilon0 * PI * PI));
-
-		// Print solution to file
-		fprintf(file,"%f\n",phi);
-
-	}
-
-	// Close file
-	fclose(file);
-
-	/* TASK 2 */
-	FILE *file2;
-	file2 = fopen("phi_task2.data","w");
-
-	// Use Gauss-Seidel method to solve the problem
-	while(error >= pow(10,-5)){
-
+	// Use Gauss-Seidel method to iterate three times
+	for(i = 0; i < 3; i++){
 
 		// Use Gauss-Seidel method, returns the error
 		error = gauss_seidel(u1, u2, grid_size, error, h_sq);
-
 
 		// Change pointers
 		temp = u1; 
@@ -117,16 +93,15 @@ int main(){
 	// Print the final solution to a file
 	for(i = 0; i < grid_size; i++){
 		for(j = 0; j < grid_size; j++){
-			fprintf(file2, "%f \t", u2[i][j]);
+			fprintf(file, "%f \t", u2[i][j]);
 		}
 		
-		fprintf(file2, "\n");
+		fprintf(file, "\n");
 		
 	}
 
-	//
 	// Close file
-	fclose(file2);
+	fclose(file);
 
 	// Free allocated memory DOES NOT WORK
 	/*for(i = 0; i < grid_size; i++){
