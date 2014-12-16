@@ -124,7 +124,7 @@ int main(){
 		
 	}
 
-	
+	//
 	// Close file
 	fclose(file2);
 
