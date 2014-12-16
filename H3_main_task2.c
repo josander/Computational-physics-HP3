@@ -18,9 +18,10 @@ int main(){
 	// Declaration of variables
 	int i, j;
 	double l;
-	int max_grid_size, grid_size, grid_midpoint; // error and temp gridsize
+	int max_grid_size, grid_size, grid_midpoint;
 	double error, it_error;
 	double h_sq;
+	int gamma;
 
 	// Initiation of variables
 	error = 1.0; 
@@ -29,6 +30,7 @@ int main(){
 	grid_size = 21; // (Dynamic variable)
 	grid_midpoint = (grid_size - 1)/2;
 	h_sq = pow((grid_midpoint + 1)/l,2);
+	gamma = 2;
 
 	// Declaration of arrays
 	double** u; 
@@ -66,58 +68,8 @@ int main(){
 	FILE *file;
 	file = fopen("phi.data","w");
 
-	// Until error < 10^(-5)
-	while(error >= pow(10,-5)){
-
-		// Put the res and res_error to 0 at each iteration
-		for(i = 0; i < grid_size; i++){
-			for(j = 0; j < grid_size; j++){
-				res_error[i][j] = 0.0;
-				residual[i][j] = 0.0;
-				temp[i][j] = 0.0;
-			}
-		}
-
-		// Use Gauss-Seidel method to iterate three times
-		for(i = 0; i < 3; i++){
-
-			// Use Gauss-Seidel method, returns the error
-			error = gauss_seidel(u, rho, grid_size);
-
-		}
-
-		// Compute residual
-		get_residual(u, residual, grid_size);
-
-		// Restrict to coarser grid
-		grid_size = decrease_grid(residual, grid_size);
-
-		// Solve the residual equation exactly
-		it_error = 1.0;		
-
-		while(it_error >= 0.000001){
-			it_error = get_error(residual, res_error, grid_size);
-		}
-
-		// Get fine grid
-		grid_size = increase_grid(res_error, grid_size);
-		
-		// Interpolate
-		for(i = 0; i < grid_size; i++){
-			for(j = 0; j < grid_size; j++){
-				u[i][j] += res_error[i][j];
-			}
-		}
-
-		// Again, use Gauss-Seidel method to iterate three times
-		for(i = 0; i < 3; i++){
-
-			// Use Gauss-Seidel method, returns the error
-			error = gauss_seidel(u, rho, grid_size);
-
-		}
-	
-	}
+	// Call the multigrid function
+	//multigrid(u, rho, grid_size,);
 
 	// Print the final solution to a file
 	for(i = 0; i < grid_size; i++){
