@@ -83,6 +83,7 @@ int main(){
 
 	// Until error < 10^(-5)
 	while(error >= pow(10,-5)){
+
 		// Put the res and rError to 0 at each iteration
 		for(i = 0; i < grid_size; i++){
 			for(j = 0; j < grid_size; j++){
@@ -125,14 +126,14 @@ int main(){
 		e_grid_size = t_grid_size;
 		while(itError > 0.000001){
 			itError = get_error(residual, rError, e_grid_size);
-				printf("%1.10f \n", itError );
+				//printf("%1.10f \n", itError );
 
 		}
 
 	
 		e_grid_size = increase_grid(rError, e_grid_size);
+		
 		// Interpolate
-
 		for(i = 0; i < grid_size; i++){
 			for(j = 0; j < grid_size; j++){
 				u[i][j] += rError[i][j];
