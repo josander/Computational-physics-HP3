@@ -7,5 +7,7 @@ func.h for HP3b
 
 extern double gauss_seidel(double **, double **, int, double);
 extern double get_residual();
+extern int increase_grid(double **, int);
+extern int decrease_grid(double **, int);
 
 #endif

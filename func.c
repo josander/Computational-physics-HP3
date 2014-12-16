@@ -58,3 +58,55 @@ double get_residual(){
 	return residual;
 }
 
+// Function that increase the grid size, into a coarser grid. Returns the new grid size.
+int increase_grid(double **A, int grid_size){
+
+	double new_grid_size = 0;
+
+	return new_grid_size;
+
+}
+
+// Function that decreases the grid size, into a coarser grid. Returns the new grid size.
+int decrease_grid(double **A, int grid_size){
+
+	int i,j;
+	int new_grid_size = (int) (0.5 * (grid_size - 1) + 1);
+	double temp[new_grid_size][new_grid_size];
+
+	// For all the outer points in the temp array, initialize with zeros
+	for(i = 0; i < new_grid_size; i++){
+		temp[0][i] = 0.0;
+		temp[new_grid_size - 1][i] = 0.0;
+		temp[i][0] = 0.0;
+		temp[i][new_grid_size - 1] = 0.0;
+	}
+
+	// For all the inner grid points, with eight neighbours
+	for(i = 1; i < new_grid_size - 2; i++){
+		for(j = 1; j < new_grid_size - 1; j++){
+			temp[i][j] = 0.25*A[2*i+1][2*j+1] + (A[2*i][2*j] + A[2*i][2*j+2] + A[2*i+2][2*j] + A[2*i+2][2*j+2])/16 + (A[2*i+1][2*j+2] + A[2*i+1][2*j+2] + A[2*i][2*j+1] + A[2*i+2][2*j+1])/8;
+		}
+	}
+
+	// Only for tests
+	for(i = 0; i < grid_size; i++){
+		for(j = 0; j < grid_size; j++){
+			//printf("%f\t", A[i][j]);
+		}
+		//printf("\n");
+	}
+
+	// Write the temp-array to the original array
+	for(i = 0; i < new_grid_size; i++){
+		for(j = 0; j < new_grid_size; j++){
+			A[i][j] = temp[i][j];
+			//printf("%f\t", A[i][j]);
+		}
+		//printf("\n");
+	}
+
+	return new_grid_size;
+
+}
+
