@@ -17,30 +17,19 @@ int main(){
 
 	// Declaration of variables
 	int i, j, m, n;
-	int m_max, n_max;
-	double lambda;
-	double epsilon0;
-	double l, l_inv;
+	double l;
 	double d;
-	double r, r_c, r_plus, r_minus;
+	double r;
 	double phi;
 	double x, y, dx;
 	int max_grid_size, grid_size, grid_midpoint; // error and temp gridsize
-	double error, itError;
+	double error, it_error;
 	double h_sq;
 
 	// Initiation of variables
-	m_max = 10; // 10, 50, 100
-	n_max = 10;
 	error = 1.0; 
-	lambda = 1;
-	epsilon0 = 1;
 	l = 1;
-	l_inv = 1/l;
 	d = 0.2 * l;
-	r_c = l/2;
-	r_plus = r_c + d / 2.0;
-	r_minus = r_c - d / 2.0;
 	y = l / 2;
 	max_grid_size = 21; // Maximal grid size used in the simulation
 	grid_size = 21; // Smallest grid size: 11x11, next smallest grid size: 21x21 (Dynamic variable)
@@ -108,10 +97,10 @@ int main(){
 		grid_size = decrease_grid(residual, grid_size);
 
 		// Solve the residual equation exactly
-		itError = 1.0;		
+		it_error = 1.0;		
 
-		while(itError > 0.000001){
-			itError = get_error(residual, rError, grid_size);
+		while(it_error > 0.000001){
+			it_error = get_error(residual, rError, grid_size);
 		}
 
 	
@@ -131,10 +120,7 @@ int main(){
 			// Use Gauss-Seidel method, returns the error
 			error = gauss_seidel(u, grid_size);
 
-
-
 		}
-	//	printf("%f \n", error );
 	
 	}
 	// Print the final solution to a file
