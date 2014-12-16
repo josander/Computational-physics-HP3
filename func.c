@@ -60,15 +60,18 @@ double gauss_seidel(double **u, int grid_size){
 void get_residual(double **grid, double **res, int grid_size){
 
 	int i,j;
-	double h_inv_sq = pow(1/(grid_size - 1),2);
-
+	double h_inv_sq = pow(1.0/(grid_size - 1),2);
 	for(i = 1; i < grid_size - 1; i++){
 		for(j = 1; j < grid_size - 1; j++){
 		// -LAP(PHI)
 			res[i][j] = 4*grid[i][j] - grid[i + 1][j] - grid[i - 1][j] -grid[i][j + 1] - grid[i][j - 1];
+				
 			res[i][j] *= h_inv_sq;
+
 		}
+
 	}
+	
 	//Add the chargedist 
 	res[((grid_size -1)/2)*4/5][(grid_size -1)/2] += -h_inv_sq;  
 	res[((grid_size -1)/2)*6/5][(grid_size -1)/2] += h_inv_sq;
@@ -79,7 +82,7 @@ void get_residual(double **grid, double **res, int grid_size){
 double get_error(double **res, double **error, int grid_size){
 
 	int i,j;
-	double h_sq = pow(1/(grid_size - 1),2);	
+	double h_sq = pow(1.0/(grid_size - 1),2);	
 	double h_inv_sq = pow((grid_size - 1),2);
 	double temp;
 	double itError = 0.0; // NOTE: iteration error, not the solution to the R-eq
@@ -95,8 +98,9 @@ double get_error(double **res, double **error, int grid_size){
 		
 			}		
 		}
+
 	}
-	//Add the charge
+
 	
 return(itError);
 
@@ -124,22 +128,24 @@ int increase_grid(double **A, int grid_size){
 			temp[2*i][2*j] = A[i][j];
 			temp[2*i][2*j+1] = 0.5 * (A[i][j] + A[i][j+1]);
 			temp[2*i+1][2*j] = 0.5 * (A[i+1][j] + A[i][j]); 
-			temp[2*i+1][2*i+1] = 0.25 * (A[i][j] + A[i+1][j+1] + A[i][j+1] + A[i+1][j]);
+			temp[2*i+1][2*j+1] = 0.25 * (A[i][j] + A[i+1][j+1] + A[i][j+1] + A[i+1][j]);
+
 		}
 		//printf("\n");
 	}
 
-			printf("%f\t", temp[15][1]);
+			//printf("%f\t", temp[15][1]);
 
 	// Write the temp-array to the original array
 	for(i = 0; i < new_grid_size; i++){
 		for(j = 0; j < new_grid_size; j++){
-			printf("%f\t", temp[i][j]);
+		//	printf("%f ", temp[i][j]);
+
 			A[i][j] = temp[i][j];
 
-			if(A[i][j] != A[i][j]) {printf("NAN: %i \t %i\t ", i,j);}
+
 		}
-		printf("\n");
+		//printf("\n");
 	}
 
 	return new_grid_size;
@@ -151,6 +157,7 @@ int decrease_grid(double **A, int grid_size){
 	int i,j;
 	int new_grid_size = (int) (0.5 * (grid_size - 1) + 1);
 	double temp[new_grid_size][new_grid_size];
+	
 
 	// For all the outer points in the temp array, initialize with zeros
 	for(i = 0; i < new_grid_size; i++){

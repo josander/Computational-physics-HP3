@@ -25,8 +25,8 @@ int main(){
 	double r, r_c, r_plus, r_minus;
 	double phi;
 	double x, y, dx;
-	int max_grid_size, grid_size, grid_midpoint;
-	double error;
+	int max_grid_size, grid_size, grid_midpoint, e_grid_size, t_grid_size; // error and temp gridsize
+	double error, itError;
 	double h_sq;
 
 	// Initiation of variables
@@ -42,7 +42,6 @@ int main(){
 	r_plus = r_c + d / 2.0;
 	r_minus = r_c - d / 2.0;
 	y = l / 2;
-	dx = 0.0001;
 	max_grid_size = 21; // Maximal grid size used in the simulation
 	grid_size = 21; // Smallest grid size: 11x11, next smallest grid size: 21x21 (Dynamic variable)
 	grid_midpoint = (grid_size -1)/2;
@@ -51,15 +50,18 @@ int main(){
 	// Declaration of arrays
 	double** u; 
 	double** rError; //Error given by LAP(rError) = res
+	double** residual;
 	double** temp;
 
 	u = (double**) malloc(grid_size * sizeof(double*));
 	rError = (double**) malloc(grid_size * sizeof(double*));
+	residual = (double**) malloc(grid_size * sizeof(double*));
 	temp = (double**) malloc(grid_size * sizeof(double*));
 
 	for(i = 0; i < grid_size; i++){
 		u[i] = (double*) malloc(grid_size * sizeof(double));
 		rError[i] = (double*) malloc(grid_size * sizeof(double));
+		residual[i] = (double*) malloc(grid_size * sizeof(double));
 		temp[i] = (double*) malloc(grid_size * sizeof(double));
 	}
 
@@ -67,9 +69,7 @@ int main(){
 	for(i = 0; i < grid_size; i++){
 		for(j = 0; j < grid_size; j++){
 			u[i][j] = 0.0;
-			rError[i][j] = 0.0;
-
-			temp[i][j] = 0.0;
+			
 		}
 	}
 
@@ -82,7 +82,15 @@ int main(){
 	file = fopen("phi.data","w");
 
 	// Until error < 10^(-5)
-	//while(error >= pow(10,-5)){
+	while(error >= pow(10,-5)){
+		// Put the res and rError to 0 at each iteration
+		for(i = 0; i < grid_size; i++){
+			for(j = 0; j < grid_size; j++){
+				rError[i][j] = 0.0;
+				residual[i][j] = 0.0;
+				temp[i][j] = 0.0;
+			}
+		}
 
 		// Use Gauss-Seidel method to iterate three times
 		for(i = 0; i < 3; i++){
@@ -91,29 +99,46 @@ int main(){
 			error = gauss_seidel(u, grid_size);
 
 
-			// Change pointers
+
 
 		}
 
-		// Print the final solution to a file
+
+
 		for(i = 0; i < grid_size; i++){
 			for(j = 0; j < grid_size; j++){
-				fprintf(file, "%f \t", u[i][j]);
+				temp[i][j] = u[i][j];
+
 			}
-		
-			fprintf(file, "\n");
-		
 		}
-
-
 		// Restrict to coarser grid
-		grid_size = decrease_grid(u, grid_size);
-		grid_size = increase_grid(u, grid_size); // Only for tests
+		
+		t_grid_size = grid_size;
+		t_grid_size = decrease_grid(temp, t_grid_size);
+		//grid_size = increase_grid(u, grid_size); // Only for tests
 
 
 		// Solve the residual equation exactly
+		get_residual(temp, residual, t_grid_size);
+		itError = 1.0;		
+		
+		e_grid_size = t_grid_size;
+		while(itError > 0.000001){
+			itError = get_error(residual, rError, e_grid_size);
+				printf("%1.10f \n", itError );
 
+		}
+
+	
+		e_grid_size = increase_grid(rError, e_grid_size);
 		// Interpolate
+
+		for(i = 0; i < grid_size; i++){
+			for(j = 0; j < grid_size; j++){
+				u[i][j] += rError[i][j];
+				
+			}
+		}
 
 		// Again, use Gauss-Seidel method to iterate three times
 		for(i = 0; i < 3; i++){
@@ -121,11 +146,11 @@ int main(){
 			// Use Gauss-Seidel method, returns the error
 			error = gauss_seidel(u, grid_size);
 
-			// Change pointers
+
 
 		}
-
-	//}
+		//printf("%f \n", error );
+	}
 
 	// Print the final solution to a file
 	for(i = 0; i < grid_size; i++){
@@ -149,7 +174,7 @@ int main(){
 
 	free(u1); free(u2); free(temp);*/
 
-	u = NULL; rError = NULL; temp = NULL;
+	u = NULL; rError = NULL; residual = NULL; temp = NULL;
 
 }
 
