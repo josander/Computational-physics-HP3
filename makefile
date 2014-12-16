@@ -4,7 +4,7 @@ CFLAGS = -O3
 LIBS = -lm
 
 HEADERS = func.h
-OBJECTS = H3_main.o func.o
+OBJECTS = H3_main_task1.o func.o
 PROGRAM = H3
 
 %.o: %.c $(HEADERS)
