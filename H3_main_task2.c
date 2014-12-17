@@ -26,30 +26,21 @@ int main(){
 	// Initiation of variables
 	error = 1.0; 
 	l = 1.0;
-	max_grid_size = 81; // Maximal grid size used in the simulation
-	grid_size = 21; // (Dynamic variable)
+	max_grid_size = 321; // Maximal grid size used in the simulation
+	grid_size = 321; // (Dynamic variable)
 	grid_midpoint = (grid_size - 1)/2;
 	h_sq = pow(l/(grid_size-1.0),2.0);
 	gamma = 2;
 
 	// Declaration of arrays
 	double** u; 
-	double** res_error; //Error given by LAP(res_error) = res
-	double** residual;
-	double** temp;
 	double** rho;
 
 	u = (double**) malloc(max_grid_size * sizeof(double*));
-	res_error = (double**) malloc(max_grid_size * sizeof(double*));
-	residual = (double**) malloc(max_grid_size * sizeof(double*));
-	temp = (double**) malloc(max_grid_size * sizeof(double*));
 	rho = (double**) malloc(max_grid_size * sizeof(double*));
 
 	for(i = 0; i < max_grid_size; i++){
 		u[i] = (double*) malloc(max_grid_size * sizeof(double));
-		res_error[i] = (double*) malloc(max_grid_size * sizeof(double));
-		residual[i] = (double*) malloc(max_grid_size * sizeof(double));
-		temp[i] = (double*) malloc(max_grid_size * sizeof(double));
 		rho[i] = (double*) malloc(max_grid_size * sizeof(double));
 	}
 
@@ -61,8 +52,8 @@ int main(){
 		}
 	}
 
-	rho[grid_midpoint*4/5][grid_midpoint] = pow(-h_sq,-1); //1/h^2
-	rho[grid_midpoint*6/5][grid_midpoint] = pow(h_sq,-1);
+	rho[grid_midpoint*4/5][grid_midpoint] = pow(h_sq,-1); //1/h^2
+	rho[grid_midpoint*6/5][grid_midpoint] = pow(-h_sq,-1);
 
 
 	// File to save data
@@ -70,7 +61,11 @@ int main(){
 	file = fopen("phi.data","w");
 
 	// Call the multigrid function
-	multigrid(u, rho, grid_size, gamma);
+	while (error >= pow(10,-5)){		
+		error = multigrid(u, rho, grid_size, gamma);
+		//printf("Error: %.10f \n", error);
+	}
+	
 	
 
 	
@@ -90,14 +85,10 @@ int main(){
 	// Free allocated memory
 	for(i = 0; i < grid_size; i++){
 			free(u[i]); 
-			free(res_error[i]); 
-			free(residual[i]); 
-			free(temp[i]);
+			free(rho[i]); 
 	}
 
-	free(u); free(res_error); free(residual); free(temp);
-
-	u = NULL; res_error = NULL; residual = NULL; temp = NULL;
-
+	free(u); free(rho); 
+	u = NULL; rho = NULL;
 }
 

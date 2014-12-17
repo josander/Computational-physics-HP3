@@ -32,6 +32,7 @@ H3
 *.data
 *.eps
 *.mat
+*.txt
 
 # OS generated files #
 .DS_Store

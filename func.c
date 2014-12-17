@@ -59,7 +59,7 @@ void get_residual(double **A, double **B , double **res, int grid_size){
 			res[i][j] = 4*A[i][j] - A[i + 1][j] - A[i - 1][j] -A[i][j + 1] - A[i][j - 1];
 			res[i][j] *= h_inv_sq;
 			*/
-			res[i][j] = B[i][j]*h_sq - (-4.0*A[i][j] + A[i-1][j] + A[i+1][j] + A[i][j-1] +A[i][j+1]);
+			res[i][j] = B[i][j]*h_sq + (-4.0*A[i][j] + A[i-1][j] + A[i+1][j] + A[i][j-1] +A[i][j+1]);
 
 		}
 
@@ -74,7 +74,15 @@ int increase_grid(double **A, int grid_size){
 
 	int i,j;
 	int new_grid_size = 2 * (grid_size - 1) + 1;
-	double temp[new_grid_size][new_grid_size];
+
+	double** temp;
+	temp = (double**) malloc(new_grid_size * sizeof(double*));
+
+	for(i = 0; i < new_grid_size; i++){
+		temp[i] = (double*) malloc(new_grid_size * sizeof(double));
+	}
+
+
 
 	// For all the outer points in the temp array, initialize with zeros
 	for(i = 0; i < new_grid_size; i++){
@@ -101,7 +109,16 @@ int increase_grid(double **A, int grid_size){
 		}
 	}
 
+	for(i = 0; i < new_grid_size; i++){
+		free(temp[i]); 
+	}
+
+	free(temp);
+	temp = NULL;	
+
 	return new_grid_size;
+
+	
 }
 
 // Function that decreases the grid size, into a coarser grid. Returns the new grid size.
@@ -109,7 +126,13 @@ int decrease_grid(double **A, int grid_size){
 
 	int i,j;
 	int new_grid_size = (int) (0.5 * (grid_size - 1) + 1);
-	double temp[new_grid_size][new_grid_size];
+	
+	double** temp;
+	temp = (double**) malloc(new_grid_size * sizeof(double*));
+
+	for(i = 0; i < new_grid_size; i++){
+		temp[i] = (double*) malloc(new_grid_size * sizeof(double));
+	}
 	
 
 	// For all the outer points in the temp array, initialize with zeros
@@ -134,26 +157,36 @@ int decrease_grid(double **A, int grid_size){
 		}
 	}
 
+	for(i = 0; i < new_grid_size; i++){
+		free(temp[i]); 
+	}
+
+	free(temp);
+	temp = NULL;	
+
 	return new_grid_size;
 
 }
 
 // Solves the Poisson equation LAP(A) = B through the multigrid method 
-void multigrid(double **A, double **B, int grid_size, int gamma){
+double multigrid(double **A, double **B, int grid_size, int gamma){
 	
 	double error = 1.0;
 	int i,j;
-	int n_smooth = 1000;
-
-
+	int n_smooth = 5;
+	
+	
 
 
 	// If the most coarse grid, solve the equation exactly 
 	if (grid_size == MINGRID){
 		while (error >= pow(10,-5)){		
 			error = gauss_seidel(A, B, grid_size);
-	
+			
+		
 		}
+				
+	//printf("Error in while: %f \n", error);
 	}else{ // If a finer grid than the most coarse
 
 
@@ -161,10 +194,9 @@ void multigrid(double **A, double **B, int grid_size, int gamma){
 
 		double** res;
 		double** res_error;
-	
 		res = (double**) malloc(grid_size * sizeof(double*));
 		res_error = (double**) malloc(grid_size * sizeof(double*));
-	
+		
 		for(i = 0; i < grid_size; i++){
 			res[i] = (double*) malloc(grid_size * sizeof(double));
 			res_error[i] = (double*) malloc(grid_size * sizeof(double));
@@ -187,16 +219,29 @@ void multigrid(double **A, double **B, int grid_size, int gamma){
 		// Calculate the residual
 		get_residual(A, B, res, grid_size);
 
+
+			
 		// Decrease the grid size of res
 		grid_size = decrease_grid(res, grid_size);
-		
+	
 		// Recursive solution to the residual equation
-		for(i = 0; i < gamma; i++){
-			multigrid(res_error, res, grid_size, gamma);
+		for(i = 0; i < gamma; i++){		
+			error = multigrid(res_error, res, grid_size, gamma);
+			
 		}
-
+		
 		// Increas res_error to original size of A 
 		grid_size = increase_grid(res_error, grid_size);
+
+		
+		/*
+		for(i = 0; i < grid_size; i++){
+			for(j = 0; j < grid_size; j++){
+				printf("%f ",res_error[i][j]);
+			}
+			printf("\n");
+		}
+*/
 
 		// Update A with the error
 		for(i = 0; i < grid_size; i++){
@@ -210,8 +255,8 @@ void multigrid(double **A, double **B, int grid_size, int gamma){
 		for(i = 0; i < n_smooth; i++){
 			error = gauss_seidel(A, B, grid_size);	
 		}
-
 		
+
 
 		// Free allocated memory
 		for(i = 0; i < grid_size; i++){
@@ -222,7 +267,7 @@ void multigrid(double **A, double **B, int grid_size, int gamma){
 		free(res); free(res_error);
 		res = NULL; res_error = NULL;
 
-
+		return(error);
 	}
 
 
