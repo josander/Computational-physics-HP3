@@ -18,9 +18,10 @@ double gauss_seidel(double **A, double **B, int grid_size){
 
 	
 	int i, j;
+
 	int grid_midpoint = (grid_size - 1)/2;	
 	
-	double h_inv_sq = pow(1/(grid_size - 1),2);
+	double h_inv_sq = pow(1.0/(grid_size - 1),2)/5.0;
 	double temp;
 	double it_error = 0.0;
 
@@ -29,11 +30,13 @@ double gauss_seidel(double **A, double **B, int grid_size){
 		for(j = 1; j < grid_size - 1; j++){
 			
 			temp = A[i][j];
-			A[i][j] = 0.25 * (A[i+1][j] + A[i-1][j] + A[i][j+1] + A[i][j-1]) - h_inv_sq*B[i][j];
+			A[i][j] = 0.25 * (A[i+1][j] + A[i-1][j] + A[i][j+1] + A[i][j-1] - B[i][j]/h_inv_sq);
 			
 			// Calculate maximal error
 			if(fabs(A[i][j] - temp) > it_error){
 				it_error = fabs(A[i][j] - temp);
+			
+				
 			}
 		}
 	}
@@ -41,22 +44,27 @@ double gauss_seidel(double **A, double **B, int grid_size){
 	return(it_error);
 }
 //Function that calculates the residual
-void get_residual(double **A, double **B , double **res,int grid_size){
+void get_residual(double **A, double **B , double **res, int grid_size){
 
 	int i,j;
-	double h_inv_sq = pow(1.0/(grid_size - 1),2);
+	double h_inv_sq = pow((grid_size - 1.0),2);
+	
 
 	for(i = 1; i < grid_size - 1; i++){
 		for(j = 1; j < grid_size - 1; j++){
 
 			// B-LAP(A)
+			/*
+			res[i][j] += B[i][j];			
 			res[i][j] = 4*A[i][j] - A[i + 1][j] - A[i - 1][j] -A[i][j + 1] - A[i][j - 1];
 			res[i][j] *= h_inv_sq;
-			res[i][j] += B[i][j];
+			*/
+			res[i][j] = B[i][j] - (-4.0*A[i][j] + A[i-1][j] + A[i+1][j] + A[i][j-1] +A[i][j+1])/h_inv_sq;
 
 		}
 
 	}
+		
 
 }
 // Function that iterates GS to solve the R-eq  LAP(E) = R 

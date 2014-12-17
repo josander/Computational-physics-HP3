@@ -20,15 +20,15 @@ int main(){
 	double l;
 	int max_grid_size, grid_size, grid_midpoint; // error and temp gridsize
 	double error, it_error;
-	double h_inv_sq;
+	double h_sq;
 
 	// Initiation of variables
 	error = 1.0; 
 	l = 1.0;
 	max_grid_size = 21; // Maximal grid size used in the simulation
 	grid_size = 21; // Smallest grid size: 11x11, next smallest grid size: 21x21 (Dynamic variable)
-	grid_midpoint = (grid_size -1)/2;
-	h_inv_sq = pow((grid_size-1)/l,2);
+	grid_midpoint = (grid_size -1.0)/2.0;
+	h_sq = pow(1.0/(grid_size-1.0),2.0);
 
 	// Declaration of arrays
 	double** u; 
@@ -55,12 +55,17 @@ int main(){
 	for(i = 0; i < max_grid_size; i++){
 		for(j = 0; j < max_grid_size; j++){
 			u[i][j] = 0.0;
-			rho[i][j] = 0.0;			
+			rho[i][j] = 0.0;
+		
 		}
 	}
+	
 
-	rho[grid_midpoint*4/5][grid_midpoint] = h_inv_sq;
-	rho[grid_midpoint*6/5][grid_midpoint] = -h_inv_sq;
+
+	rho[grid_midpoint*4/5][grid_midpoint] = -h_sq;
+	rho[grid_midpoint*6/5][grid_midpoint] = h_sq;
+
+
 
 	// File to save data
 	FILE *file;
@@ -72,55 +77,64 @@ int main(){
 		// Put the res and res_error to zero at each iteration
 		for(i = 0; i < grid_size; i++){
 			for(j = 0; j < grid_size; j++){
-				res_error[i][j] = 0.0;
+
 				residual[i][j] = 0.0;
 				temp[i][j] = 0.0;
+				res_error[i][j] = 0.0;	
 			}
 		}
+
+
 
 		// Iterate Gauss-Seidel relaxation three times
 		for(i = 0; i < 3; i++){
 
 			// Use Gauss-Seidel method, returns the error
 			error = gauss_seidel(u, rho, grid_size);
+			//printf("u = %f \n", u[10][10]);
 
 		}
-
+		
 		// Compute residual
 		get_residual(u, rho, residual, grid_size);
 
 
 		// Restrict to coarser grid
-		grid_size = decrease_grid(residual, grid_size);
+		//grid_size = decrease_grid(residual, grid_size);
 
 		// Solve the residual equation exactly
 		it_error = 1.0;		
 
-
+		
 		while(it_error >= 0.000001){
 			it_error = get_error(residual, res_error, grid_size);
+
+		
 		}
 
 		// Get fine grid
-		grid_size = increase_grid(res_error, grid_size);
+		//grid_size = increase_grid(res_error, grid_size);
 
 		
 		// Interpolate
 		for(i = 0; i < grid_size; i++){
 			for(j = 0; j < grid_size; j++){
 				u[i][j] += res_error[i][j];
+					
 			}
 		}
-
+		
 		// Again, use Gauss-Seidel method to iterate three times
 		for(i = 0; i < 3; i++){
 
 			// Use Gauss-Seidel method, returns the error
 			error = gauss_seidel(u, rho, grid_size);
+;
+
 
 		}
-
-		printf("Error: %f\n", error);
+		
+		
 
 	
 	}

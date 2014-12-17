@@ -6,11 +6,9 @@ clear all
 
 phi = dlmread('phi.data');
 
-x = linspace(0,1,length(phi));
-y = linspace(0,1,length(phi));
-
+[x y] = meshgrid(0:1/(length(phi)-1):1,0:1/(length(phi)-1):1);
 figure(1);
-plot3(x,y,phi);
+surf(x,y,phi);
 
 %% Task 2
 % Plot the obtained result and compare it to the result from E6
