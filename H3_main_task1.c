@@ -28,7 +28,7 @@ int main(){
 	max_grid_size = 21; // Maximal grid size used in the simulation
 	grid_size = 21; // Smallest grid size: 11x11, next smallest grid size: 21x21 (Dynamic variable)
 	grid_midpoint = (grid_size -1.0)/2.0;
-	h_sq = pow(1.0/(grid_size-1.0),2.0);
+	h_sq = pow(l/(grid_size-1.0),2.0);
 
 	// Declaration of arrays
 	double** u; 
@@ -62,8 +62,8 @@ int main(){
 	
 
 
-	rho[grid_midpoint*4/5][grid_midpoint] = -h_sq;
-	rho[grid_midpoint*6/5][grid_midpoint] = h_sq;
+	rho[grid_midpoint*4/5][grid_midpoint] = pow(-h_sq,-1); //1/h^2
+	rho[grid_midpoint*6/5][grid_midpoint] = pow(h_sq,-1);
 
 
 
@@ -72,7 +72,7 @@ int main(){
 	file = fopen("phi.data","w");
 
 	// Until error < 10^(-5)
-	while(error >= pow(10,-5)){
+	while(error >= pow(10,-6)){
 
 		// Put the res and res_error to zero at each iteration
 		for(i = 0; i < grid_size; i++){
@@ -106,8 +106,8 @@ int main(){
 		it_error = 1.0;		
 
 		
-		while(it_error >= 0.000001){
-			it_error = get_error(residual, res_error, grid_size);
+		while(it_error >= pow(10,-5)){
+			it_error = gauss_seidel(residual, res_error, grid_size);
 
 		
 		}
@@ -136,7 +136,6 @@ int main(){
 		
 
 
-	
 	}
 
 	// Print the final solution to a file

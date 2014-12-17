@@ -21,7 +21,7 @@ double gauss_seidel(double **A, double **B, int grid_size){
 
 	int grid_midpoint = (grid_size - 1)/2;	
 	
-	double h_inv_sq = pow(1.0/(grid_size - 1),2)/5.0;
+	double h_sq = pow(1.0/(grid_size - 1),2);
 	double temp;
 	double it_error = 0.0;
 
@@ -30,7 +30,7 @@ double gauss_seidel(double **A, double **B, int grid_size){
 		for(j = 1; j < grid_size - 1; j++){
 			
 			temp = A[i][j];
-			A[i][j] = 0.25 * (A[i+1][j] + A[i-1][j] + A[i][j+1] + A[i][j-1] - B[i][j]/h_inv_sq);
+			A[i][j] = 0.25 * (A[i+1][j] + A[i-1][j] + A[i][j+1] + A[i][j-1] - B[i][j]*h_sq);
 			
 			// Calculate maximal error
 			if(fabs(A[i][j] - temp) > it_error){
@@ -47,7 +47,7 @@ double gauss_seidel(double **A, double **B, int grid_size){
 void get_residual(double **A, double **B , double **res, int grid_size){
 
 	int i,j;
-	double h_inv_sq = pow((grid_size - 1.0),2);
+	double h_sq = pow(1.0/(grid_size - 1.0),2);
 	
 
 	for(i = 1; i < grid_size - 1; i++){
@@ -59,7 +59,7 @@ void get_residual(double **A, double **B , double **res, int grid_size){
 			res[i][j] = 4*A[i][j] - A[i + 1][j] - A[i - 1][j] -A[i][j + 1] - A[i][j - 1];
 			res[i][j] *= h_inv_sq;
 			*/
-			res[i][j] = B[i][j] - (-4.0*A[i][j] + A[i-1][j] + A[i+1][j] + A[i][j-1] +A[i][j+1])/h_inv_sq;
+			res[i][j] = B[i][j]*h_sq - (-4.0*A[i][j] + A[i-1][j] + A[i+1][j] + A[i][j-1] +A[i][j+1]);
 
 		}
 
@@ -67,32 +67,7 @@ void get_residual(double **A, double **B , double **res, int grid_size){
 		
 
 }
-// Function that iterates GS to solve the R-eq  LAP(E) = R 
-double get_error(double **res, double **error, int grid_size){
 
-	int i,j;
-	double h_sq = pow(1.0/(grid_size - 1),2);	
-	double h_inv_sq = pow((grid_size - 1),2);
-	double temp;
-	double it_error = 0.0; // NOTE: iteration error, not the solution to the R-eq
-
-	//GS
-	for(i = 1; i < grid_size - 1; i++){
-		for(j = 1; j < grid_size - 1; j++){
-			temp = error[i][j];
-			error[i][j] = 0.25 * (error[i+1][j] + error[i-1][j] + error[i][j+1] + error[i][j-1] - h_sq*res[i][j] );
-
-			// Calculate maximal error
-			if(fabs(error[i][j] - temp) > it_error){
-				it_error = fabs(error[i][j] - temp);
-		
-			}		
-		}
-	}
-
-return(it_error);
-
-}
 
 // Function that increase the grid size, into a finer grid. Returns the new grid size.
 int increase_grid(double **A, int grid_size){
