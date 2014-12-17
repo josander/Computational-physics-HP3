@@ -20,7 +20,7 @@ int main(){
 	double l;
 	int max_grid_size, grid_size, grid_midpoint;
 	double error, it_error;
-	double h_inv_sq;
+	double h_sq;
 	int gamma;
 
 	// Initiation of variables
@@ -29,7 +29,7 @@ int main(){
 	max_grid_size = 81; // Maximal grid size used in the simulation
 	grid_size = 21; // (Dynamic variable)
 	grid_midpoint = (grid_size - 1)/2;
-	h_inv_sq = pow((grid_size-1)/l,2);
+	h_sq = pow(l/(grid_size-1.0),2.0);
 	gamma = 2;
 
 	// Declaration of arrays
@@ -61,8 +61,9 @@ int main(){
 		}
 	}
 
-	rho[grid_midpoint*4/5][grid_midpoint] = h_inv_sq;
-	rho[grid_midpoint*6/5][grid_midpoint] = -h_inv_sq;
+	rho[grid_midpoint*4/5][grid_midpoint] = pow(-h_sq,-1); //1/h^2
+	rho[grid_midpoint*6/5][grid_midpoint] = pow(h_sq,-1);
+
 
 	// File to save data
 	FILE *file;
@@ -70,7 +71,9 @@ int main(){
 
 	// Call the multigrid function
 	multigrid(u, rho, grid_size, gamma);
+	
 
+	
 	// Print the final solution to a file
 	for(i = 0; i < grid_size; i++){
 		for(j = 0; j < grid_size; j++){

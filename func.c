@@ -123,7 +123,7 @@ int decrease_grid(double **A, int grid_size){
 	// For all the inner grid points, with eight neighbours
 	for(i = 1; i < new_grid_size - 1; i++){
 		for(j = 1; j < new_grid_size - 1; j++){
-			temp[i][j] = 0.25 * A[2*i+1][2*j+1] + (A[2*i][2*j] + A[2*i][2*j+2] + A[2*i+2][2*j] + A[2*i+2][2*j+2])/16 + (A[2*i+1][2*j+2] + A[2*i+1][2*j+2] + A[2*i][2*j+1] + A[2*i+2][2*j+1])/8;
+			temp[i][j] = 0.25 * A[2*i+1][2*j+1] + (A[2*i][2*j] + A[2*i][2*j+2] + A[2*i+2][2*j] + A[2*i+2][2*j+2])/16.0 + (A[2*i+1][2*j+2] + A[2*i+1][2*j+2] + A[2*i][2*j+1] + A[2*i+2][2*j+1])/8.0;
 		}
 	}
 
@@ -143,42 +143,49 @@ void multigrid(double **A, double **B, int grid_size, int gamma){
 	
 	double error = 1.0;
 	int i,j;
-	int n_smooth = 3;
+	int n_smooth = 1000;
 
-	// Declaration of arrays
-	double** res;
-	double** res_error;
 
-	res = (double**) malloc(grid_size * sizeof(double*));
-	res_error = (double**) malloc(grid_size * sizeof(double*));
 
-	for(i = 0; i < grid_size; i++){
-		res[i] = (double*) malloc(grid_size * sizeof(double));
-		res_error[i] = (double*) malloc(grid_size * sizeof(double));
-
-	}
-		
-	// Initiate arrays
-	for(i = 0; i < grid_size; i++){
-		for(j = 0; j < grid_size; j++){
-			res[i][j] = 0.0;
-			res_error[i][j] = 0.0;
-		}
-	}
 
 	// If the most coarse grid, solve the equation exactly 
 	if (grid_size == MINGRID){
 		while (error >= pow(10,-5)){		
 			error = gauss_seidel(A, B, grid_size);
+	
 		}
 	}else{ // If a finer grid than the most coarse
+
+
+		// Declaration of arrays
+
+		double** res;
+		double** res_error;
+	
+		res = (double**) malloc(grid_size * sizeof(double*));
+		res_error = (double**) malloc(grid_size * sizeof(double*));
+	
+		for(i = 0; i < grid_size; i++){
+			res[i] = (double*) malloc(grid_size * sizeof(double));
+			res_error[i] = (double*) malloc(grid_size * sizeof(double));
+		}
+
+		// Initiate arrays
+		for(i = 0; i < grid_size; i++){
+			for(j = 0; j < grid_size; j++){
+				res[i][j] = 0.0;
+				res_error[i][j] = 0.0;
+			}
+		}
+
 
 		// Presmooth A
 		for(i = 0; i < n_smooth; i++){
 			error = gauss_seidel(A, B, grid_size);	
 		}
+		
 		// Calculate the residual
-		get_residual(A, res, B, grid_size);
+		get_residual(A, B, res, grid_size);
 
 		// Decrease the grid size of res
 		grid_size = decrease_grid(res, grid_size);
@@ -195,23 +202,29 @@ void multigrid(double **A, double **B, int grid_size, int gamma){
 		for(i = 0; i < grid_size; i++){
 			for(j = 0; j < grid_size; j++){
 				A[i][j] += res_error[i][j];
+
 			}
 		}
-
+		
 		// Postsmooth A
 		for(i = 0; i < n_smooth; i++){
 			error = gauss_seidel(A, B, grid_size);	
 		}
 
+		
+
+		// Free allocated memory
+		for(i = 0; i < grid_size; i++){
+			free(res[i]); 
+			free(res_error[i]); 
+		}
+
+		free(res); free(res_error);
+		res = NULL; res_error = NULL;
+
+
 	}
 
-	// Free allocated memory
-	for(i = 0; i < grid_size; i++){
-		free(res[i]); 
-		free(res_error[i]); 
-	}
 
-	free(res); free(res_error);
-	res = NULL; res_error = NULL;
 }
 
