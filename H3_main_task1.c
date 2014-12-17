@@ -91,7 +91,7 @@ int main(){
 
 			// Use Gauss-Seidel method, returns the error
 			error = gauss_seidel(u, rho, grid_size);
-			//printf("u = %f \n", u[10][10]);
+			
 
 		}
 		
@@ -100,7 +100,7 @@ int main(){
 
 
 		// Restrict to coarser grid
-		//grid_size = decrease_grid(residual, grid_size);
+		grid_size = decrease_grid(residual, grid_size);
 
 		// Solve the residual equation exactly
 		it_error = 1.0;		
@@ -113,7 +113,7 @@ int main(){
 		}
 
 		// Get fine grid
-		//grid_size = increase_grid(res_error, grid_size);
+		grid_size = increase_grid(res_error, grid_size);
 
 		
 		// Interpolate
@@ -134,7 +134,7 @@ int main(){
 
 		}
 		
-		
+
 
 	
 	}
