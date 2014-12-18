@@ -21,6 +21,7 @@ int main(){
 	int max_grid_size, grid_size, grid_midpoint; // error and temp gridsize
 	double error, it_error;
 	double h_sq;
+	int nbr_computations;
 
 	// Initiation of variables
 	error = 1.0; 
@@ -29,6 +30,7 @@ int main(){
 	grid_size = 21; // Smallest grid size: 11x11, next smallest grid size: 21x21 (Dynamic variable)
 	grid_midpoint = (grid_size -1.0)/2.0;
 	h_sq = pow(l/(grid_size-1.0),2.0);
+	nbr_computations = 0;
 
 	// Declaration of arrays
 	double** u; 
@@ -90,7 +92,7 @@ int main(){
 		for(i = 0; i < 3; i++){
 
 			// Use Gauss-Seidel method, returns the error
-			error = gauss_seidel(u, rho, grid_size);
+			error = gauss_seidel(u, rho, grid_size, &nbr_computations);
 			
 
 		}
@@ -107,7 +109,7 @@ int main(){
 
 		
 		while(it_error >= pow(10,-5)){
-			it_error = gauss_seidel(residual, res_error, grid_size);
+			it_error = gauss_seidel(residual, res_error, grid_size, &nbr_computations);
 
 		
 		}
@@ -128,13 +130,9 @@ int main(){
 		for(i = 0; i < 3; i++){
 
 			// Use Gauss-Seidel method, returns the error
-			error = gauss_seidel(u, rho, grid_size);
-;
-
+			error = gauss_seidel(u, rho, grid_size, &nbr_computations);
 
 		}
-		
-
 
 	}
 

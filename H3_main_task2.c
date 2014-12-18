@@ -69,7 +69,6 @@ int main(){
 	}
 	
 	printf("Computations: %i\n", nbr_computations);
-
 	
 	// Print the final solution to a file
 	for(i = 0; i < grid_size; i++){
