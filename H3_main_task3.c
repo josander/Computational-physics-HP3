@@ -1,5 +1,5 @@
 /*
- H3_main_task2.c
+ H3_main_task3.c
 
 Main program for task 3 in HP3b. To compile this main-program, make sure to change the makefile. 
 
@@ -16,27 +16,29 @@ Main program for task 3 in HP3b. To compile this main-program, make sure to chan
 int main(){
 
 	// Declaration of variables
-	int i, j, k;
+	int i, j;
 	double l;
-	int max_grid_size, grid_size, grid_midpoint;
+	int max_grid_size; // Maximum grid size during the whole simulation 
+	int grid_size; // Start grid size (Dynamic variable during the simulation)
+	int grid_midpoint;
 	double error, it_error;
 	double h_sq;
 	int gamma;
-	int nbr_computations;
+	int nbr_computations; // Calculated how many Gauss-Seidel computations that are done
 
 	// Initiation of variables
 	error = 1.0; 
 	l = 1.0;
-	max_grid_size = 641; // Maximal grid size used in the simulation
-	grid_size = 11; // (Dynamic variable)
+	max_grid_size = 641;
+	grid_size = 11; 
 	grid_midpoint = (grid_size - 1)/2;
 	h_sq = pow(l/(grid_size-1.0),2.0);
 	gamma = 1;
 	nbr_computations = 0;
 
 	// Declaration of arrays
-	double** u; 
-	double** rho;
+	double** u; // The potential
+	double** rho; // The charge distribution
 
 	u = (double**) malloc(max_grid_size * sizeof(double*));
 	rho = (double**) malloc(max_grid_size * sizeof(double*));
@@ -62,12 +64,13 @@ int main(){
 	FILE *file;
 	file = fopen("phi.data","w");
 
-	// Run the full multigrid 
+	// Print in the terminal
 	printf("Grid size: %i \n",grid_size);
+
+	// Run the full multigrid 
 	while (grid_size < max_grid_size){
 		while (error >= pow(10,-5)){		
 			error = multigrid(u, rho, grid_size, gamma, &nbr_computations);
-			//printf("Error: %.10f \n", error);
 		}
 		error = 1.0; 		
 		
@@ -90,10 +93,8 @@ int main(){
 	}
 	//Run multigrid for the largest size
 	error = 1.0; 
-	while (error >= pow(10,-6)){		
+	while (error >= pow(10,-5)){		
 		error = multigrid(u, rho, grid_size, gamma, &nbr_computations);
-		//printf("Error: %.10f \n", error);
-
 	}	
 	
 

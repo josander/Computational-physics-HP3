@@ -150,6 +150,7 @@ int decrease_grid(double **A, int grid_size){
 		}
 	}
 
+	// Free allocated memory
 	for(i = 0; i < new_grid_size; i++){
 		free(temp[i]); 
 	}
@@ -211,15 +212,12 @@ double multigrid(double **A, double **B, int grid_size, int gamma, int *nbr_comp
 		// Calculate the residual
 		get_residual(A, B, res, grid_size);
 
-
-			
 		// Decrease the grid size of res
 		grid_size = decrease_grid(res, grid_size);
 	
 		// Recursive solution to the residual equation
 		for(i = 0; i < gamma; i++){		
 			error = multigrid(res_error, res, grid_size, gamma, nbr_computations);
-			
 		}
 		
 		// Increas res_error to original size of A 
