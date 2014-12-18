@@ -18,10 +18,12 @@ int main(){
 	// Declaration of variables
 	int i, j;
 	double l;
-	int max_grid_size, grid_size, grid_midpoint; // error and temp gridsize
+	int max_grid_size; // Maximum grid size during the whole simulation 
+	int grid_size; // Start grid size (Dynamic variable during the simulation)
+	int grid_midpoint;
 	double error, it_error;
 	double h_sq;
-	int nbr_computations;
+	int nbr_computations; // Calculated how many Gauss-Seidel computations that are done
 
 	// Initiation of variables
 	error = 1.0; 
@@ -33,10 +35,10 @@ int main(){
 	nbr_computations = 0;
 
 	// Declaration of arrays
-	double** u; 
+	double** u; // Potential
 	double** res_error; //Error given by LAP(res_error) = res
 	double** residual;
-	double** rho;
+	double** rho; // Charge distribution
 
 	u = (double**) malloc(max_grid_size * sizeof(double*));
 	res_error = (double**) malloc(max_grid_size * sizeof(double*));
@@ -82,9 +84,8 @@ int main(){
 		for(i = 0; i < 3; i++){
 
 			// Use Gauss-Seidel method, returns the error
-
 			error = gauss_seidel(u, rho, grid_size, &nbr_computations);
-			
+
 		}
 		
 		// Compute residual
@@ -115,6 +116,7 @@ int main(){
 		
 		// Again, use Gauss-Seidel method to iterate three times
 		for(i = 0; i < 3; i++){
+
 			// Use Gauss-Seidel method, returns the error
 			error = gauss_seidel(u, rho, grid_size, &nbr_computations);
 		}
