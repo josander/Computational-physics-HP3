@@ -175,6 +175,7 @@ l = legend('Exact solution','J = 21','J = 81','J = 321','J = 1281');
 set(l,'Location','NorthWest')
 
 
+<<<<<<< HEAD
 set(x, 'Units', 'Normalized', 'Position', [0.5, -0.06, 0]);
 print(gcf,'-depsc2','FMGN.eps')
 clf
@@ -190,3 +191,30 @@ l = legend('Exact solution','J = 21','J = 81','J = 321','J = 1281');
 set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.5, 0]);
 set(x, 'Units', 'Normalized', 'Position', [0.5, -0.06, 0]);
 print(gcf,'-depsc2','FMGN2.eps')
+=======
+%% Nice cycle-plots
+clc
+clf
+
+V = [81, 41, 21, 11, 21, 41, 81];
+
+W = [81 41 21 11 21 11 21 41 21 11 21 11 21 41 81];
+
+M = [11 21 11 21 41 21 11 21 41 81];
+
+
+plot(linspace(1,length(V)+1,length(V)), V,'.-','markersize',20);
+hold on
+plot(linspace(length(V)+3,length(V)+length(W)+3,length(W)), W,'.-','markersize',20);
+hold on
+plot(linspace(length(W)+3+length(V)+3,length(V)+length(W)+3+3+length(M),length(M)), M,'.-','markersize',20);
+hold off
+
+set(gca,'xtick',[])
+y = ylabel('Grid size [ ]', 'fontsize', 12);   
+%axis([0.5 0.7 0 1.25])
+plotTickLatex2D
+
+set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.5, 0]);
+print(gcf,'-depsc2','cycles.eps')
+>>>>>>> c349f94f83cf5478240369a139791248e043424c
