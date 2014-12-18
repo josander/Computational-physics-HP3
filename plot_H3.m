@@ -165,6 +165,8 @@ print(gcf,'-depsc2','FMG2.eps')
 clc
 clf
 
+set(gcf,'renderer','painters','PaperPosition',[0 0 4.7 3]);
+
 V = [81, 41, 21, 11, 21, 41, 81];
 
 W = [81 41 21 11 21 11 21 41 21 11 21 11 21 41 81];
