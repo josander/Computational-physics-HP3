@@ -159,5 +159,34 @@ l = legend('J = 21','J = 41','J = 81','J = 161','J = 321','J = 641','J = 1281');
 set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.5, 0]);
 set(x, 'Units', 'Normalized', 'Position', [0.5, -0.06, 0]);
 print(gcf,'-depsc2','FMG2.eps')
+%% Task 3
+exact = dlmread('phi_exact_5000x5000.txt');
+%%
+
+figure(2)
+clf
+set(gcf,'renderer','painters','PaperPosition',[0 0 4.7 3]);
+
+plot(0:1/(length(exact)-1):1,exact,0:1/(gridsizes(1)-1):1,phiFMG21(:,halfpoints(1)),0:1/(gridsizes(3)-1):1,phiFMG81(:,halfpoints(3)),0:1/(gridsizes(5)-1):1,phiFMG321(:,halfpoints(5)),0:1/(gridsizes(7)-1):1,phiFMG1281(:,halfpoints(7))) 
+y = ylabel('$\Phi$(x,y) [V]', 'fontsize', 12);   
+x = xlabel('x [m]', 'fontsize', 12);   
+plotTickLatex2D
+l = legend('Exact solution','J = 21','J = 81','J = 321','J = 1281');
+set(l,'Location','NorthWest')
 
 
+set(x, 'Units', 'Normalized', 'Position', [0.5, -0.06, 0]);
+print(gcf,'-depsc2','FMGN.eps')
+clf
+plot(0:1/(length(exact)-1):1,exact,0:1/(gridsizes(1)-1):1,phiFMG21(:,halfpoints(1)),0:1/(gridsizes(3)-1):1,phiFMG81(:,halfpoints(3)),0:1/(gridsizes(5)-1):1,phiFMG321(:,halfpoints(5)),0:1/(gridsizes(7)-1):1,phiFMG1281(:,halfpoints(7))) 
+y = ylabel('$\Phi$(x,y) [V]', 'fontsize', 12);   
+x = xlabel('x [m]', 'fontsize', 12);   
+axis([0.5 0.7 0 1.25])
+plotTickLatex2D
+
+l = legend('Exact solution','J = 21','J = 81','J = 321','J = 1281');
+
+
+set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.5, 0]);
+set(x, 'Units', 'Normalized', 'Position', [0.5, -0.06, 0]);
+print(gcf,'-depsc2','FMGN2.eps')
