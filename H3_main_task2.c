@@ -63,7 +63,7 @@ int main(){
 	// Call the multigrid function
 	while (error >= pow(10,-5)){		
 		error = multigrid(u, rho, grid_size, gamma);
-		printf("Error: %.10f \n", error);
+		//printf("Error: %.10f \n", error);
 	}
 	
 	

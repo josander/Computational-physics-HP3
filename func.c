@@ -13,7 +13,7 @@ gird_size = N*10 + 1
 #define PI 3.141592653589
 #define MINGRID 11
 
-// Function for the Gauss-Seidel method. Returns the maximal error. 
+// Function for the Gauss-Seidel method for LAP(A) = B. Returns the maximal error. 
 double gauss_seidel(double **A, double **B, int grid_size){
 
 	
@@ -43,7 +43,7 @@ double gauss_seidel(double **A, double **B, int grid_size){
 
 	return(it_error);
 }
-//Function that calculates the residual
+//Function that calculates the residual of LAP(A) = B
 void get_residual(double **A, double **B , double **res, int grid_size){
 
 	int i,j;
@@ -53,20 +53,9 @@ void get_residual(double **A, double **B , double **res, int grid_size){
 
 	for(i = 1; i < grid_size - 1; i++){
 		for(j = 1; j < grid_size - 1; j++){
-
-			// B-LAP(A)
-			/*
-			res[i][j] += B[i][j];			
-			res[i][j] = 4*A[i][j] - A[i + 1][j] - A[i - 1][j] -A[i][j + 1] - A[i][j - 1];
-			res[i][j] *= h_inv_sq;
-			*/
 			res[i][j] = B[i][j] - (-4.0*A[i][j] + A[i-1][j] + A[i+1][j] + A[i][j-1] +A[i][j+1])/h_sq;
-
 		}
-
-	}
-		
-
+	}		
 }
 
 
@@ -169,18 +158,17 @@ int decrease_grid(double **A, int grid_size){
 
 }
 
-// Solves the Poisson equation LAP(A) = B through the multigrid method 
+// Solves the Poisson equation LAP(A) = B through the multigrid method
+
 double multigrid(double **A, double **B, int grid_size, int gamma){
 	
 	double error = 1.0;
 	int i,j;
 	int n_smooth = 5;
 	
-	
 
-
-	// If the most coarse grid, solve the equation exactly 
-	if (grid_size == MINGRID){
+	// If the most coarse grid, solve the equation using GS 
+	if (grid_size <= MINGRID){
 		while (error >= pow(10,-5)){		
 			error = gauss_seidel(A, B, grid_size);
 			return(error);
@@ -188,8 +176,7 @@ double multigrid(double **A, double **B, int grid_size, int gamma){
 		
 		}
 				
-	//printf("Error in while: %f \n", error);
-	}else{ // If a finer grid than the most coarse
+	}else{ // If a finer grid than the most coarse run the MG
 
 
 		// Declaration of arrays
@@ -235,22 +222,11 @@ double multigrid(double **A, double **B, int grid_size, int gamma){
 		// Increas res_error to original size of A 
 		grid_size = increase_grid(res_error, grid_size);
 
-		
-		/*
-		for(i = 0; i < grid_size; i++){
-			for(j = 0; j < grid_size; j++){
-				printf("%f ",res_error[i][j]);
-			}
-			printf("\n");
-		}
-*/
 
 		// Update A with the error
 		for(i = 0; i < grid_size; i++){
 			for(j = 0; j < grid_size; j++){
-				A[i][j] += res_error[i][j];
-				
-
+				A[i][j] += res_error[i][j];		
 			}
 		}
 		
@@ -259,7 +235,6 @@ double multigrid(double **A, double **B, int grid_size, int gamma){
 			error = gauss_seidel(A, B, grid_size);	
 		}
 		
-
 
 		// Free allocated memory
 		for(i = 0; i < grid_size; i++){
