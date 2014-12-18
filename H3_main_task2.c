@@ -68,7 +68,7 @@ int main(){
 		//printf("Error: %.10f \n", error);
 	}
 	
-	printf("Computations: %i\n", nbr_computations);
+	printf("Grid size: %i\tComputations: %i\n", grid_size, nbr_computations);
 	
 	// Print the final solution to a file
 	for(i = 0; i < grid_size; i++){
