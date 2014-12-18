@@ -34,23 +34,19 @@ int main(){
 	double** u; 
 	double** res_error; //Error given by LAP(res_error) = res
 	double** residual;
-	double** temp;
 	double** rho;
 
 	u = (double**) malloc(max_grid_size * sizeof(double*));
 	res_error = (double**) malloc(max_grid_size * sizeof(double*));
 	residual = (double**) malloc(max_grid_size * sizeof(double*));
-	temp = (double**) malloc(max_grid_size * sizeof(double*));
 	rho = (double**) malloc(max_grid_size * sizeof(double*));
 
 	for(i = 0; i < max_grid_size; i++){
 		u[i] = (double*) malloc(max_grid_size * sizeof(double));
 		res_error[i] = (double*) malloc(max_grid_size * sizeof(double));
 		residual[i] = (double*) malloc(max_grid_size * sizeof(double));
-		temp[i] = (double*) malloc(max_grid_size * sizeof(double));
 		rho[i] = (double*) malloc(max_grid_size * sizeof(double));
 	}
-
 	// Initiation of arrays
 	for(i = 0; i < max_grid_size; i++){
 		for(j = 0; j < max_grid_size; j++){
@@ -60,11 +56,9 @@ int main(){
 		}
 	}
 	
-
-
-	rho[grid_midpoint*4/5][grid_midpoint] = pow(-h_sq,-1); //1/h^2
-	rho[grid_midpoint*6/5][grid_midpoint] = pow(h_sq,-1);
-
+	//Initiate the dipole
+	rho[grid_midpoint*4/5][grid_midpoint] = pow(h_sq,-1); //1/h^2
+	rho[grid_midpoint*6/5][grid_midpoint] = pow(-h_sq,-1);
 
 
 	// File to save data
@@ -77,65 +71,49 @@ int main(){
 		// Put the res and res_error to zero at each iteration
 		for(i = 0; i < grid_size; i++){
 			for(j = 0; j < grid_size; j++){
-
 				residual[i][j] = 0.0;
-				temp[i][j] = 0.0;
 				res_error[i][j] = 0.0;	
 			}
 		}
-
-
 
 		// Iterate Gauss-Seidel relaxation three times
 		for(i = 0; i < 3; i++){
 
 			// Use Gauss-Seidel method, returns the error
 			error = gauss_seidel(u, rho, grid_size);
-			
-
 		}
 		
 		// Compute residual
 		get_residual(u, rho, residual, grid_size);
 
 
-		// Restrict to coarser grid
+		// Reduce the gridsize of the residual
 		grid_size = decrease_grid(residual, grid_size);
 
-		// Solve the residual equation exactly
+		// Solve the residual equation to 10^-5
 		it_error = 1.0;		
-
-		
 		while(it_error >= pow(10,-5)){
 			it_error = gauss_seidel(residual, res_error, grid_size);
 
 		
 		}
 
-		// Get fine grid
+		// Increase the gridsize of thesolution to the residual-equation
 		grid_size = increase_grid(res_error, grid_size);
 
 		
-		// Interpolate
+		// Interpolate the solution to the residual-equation
 		for(i = 0; i < grid_size; i++){
 			for(j = 0; j < grid_size; j++){
-				u[i][j] += res_error[i][j];
-					
+				u[i][j] += res_error[i][j];		
 			}
 		}
 		
 		// Again, use Gauss-Seidel method to iterate three times
 		for(i = 0; i < 3; i++){
-
 			// Use Gauss-Seidel method, returns the error
 			error = gauss_seidel(u, rho, grid_size);
-;
-
-
 		}
-		
-
-
 	}
 
 	// Print the final solution to a file
@@ -143,9 +121,7 @@ int main(){
 		for(j = 0; j < grid_size; j++){
 			fprintf(file, "%f \t", u[i][j]);
 		}
-		
 		fprintf(file, "\n");
-		
 	}
 
 	// Close file
@@ -156,12 +132,8 @@ int main(){
 			free(u[i]); 
 			free(res_error[i]); 
 			free(residual[i]); 
-			free(temp[i]);
 	}
-
-
-	free(u); free(res_error); free(residual); free(temp);
-	u = NULL; res_error = NULL; residual = NULL; temp = NULL;
-
+	free(u); free(res_error); free(residual); 
+	u = NULL; res_error = NULL; residual = NULL; 
 }
 
