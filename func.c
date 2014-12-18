@@ -49,6 +49,7 @@ void get_residual(double **A, double **B , double **res, int grid_size){
 	int i,j;
 	double h_sq = pow(1.0/(grid_size - 1.0),2);
 	
+	
 
 	for(i = 1; i < grid_size - 1; i++){
 		for(j = 1; j < grid_size - 1; j++){
@@ -59,7 +60,7 @@ void get_residual(double **A, double **B , double **res, int grid_size){
 			res[i][j] = 4*A[i][j] - A[i + 1][j] - A[i - 1][j] -A[i][j + 1] - A[i][j - 1];
 			res[i][j] *= h_inv_sq;
 			*/
-			res[i][j] = B[i][j]*h_sq + (-4.0*A[i][j] + A[i-1][j] + A[i+1][j] + A[i][j-1] +A[i][j+1]);
+			res[i][j] = B[i][j] - (-4.0*A[i][j] + A[i-1][j] + A[i+1][j] + A[i][j-1] +A[i][j+1])/h_sq;
 
 		}
 
@@ -182,6 +183,7 @@ double multigrid(double **A, double **B, int grid_size, int gamma){
 	if (grid_size == MINGRID){
 		while (error >= pow(10,-5)){		
 			error = gauss_seidel(A, B, grid_size);
+			return(error);
 			
 		
 		}
@@ -247,6 +249,7 @@ double multigrid(double **A, double **B, int grid_size, int gamma){
 		for(i = 0; i < grid_size; i++){
 			for(j = 0; j < grid_size; j++){
 				A[i][j] += res_error[i][j];
+				
 
 			}
 		}

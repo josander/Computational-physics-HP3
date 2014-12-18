@@ -1,7 +1,7 @@
 /*
  H3_main_task2.c
 
-Main program for task 2 in HP3b. To compile this main-program, make sure to change the makefile. 
+Main program for task 3 in HP3b. To compile this main-program, make sure to change the makefile. 
 
  */
 
@@ -16,7 +16,7 @@ Main program for task 2 in HP3b. To compile this main-program, make sure to chan
 int main(){
 
 	// Declaration of variables
-	int i, j;
+	int i, j, k;
 	double l;
 	int max_grid_size, grid_size, grid_midpoint;
 	double error, it_error;
@@ -26,11 +26,11 @@ int main(){
 	// Initiation of variables
 	error = 1.0; 
 	l = 1.0;
-	max_grid_size = 1281; // Maximal grid size used in the simulation
-	grid_size = 21; // (Dynamic variable)
+	max_grid_size = 641; // Maximal grid size used in the simulation
+	grid_size = 11; // (Dynamic variable)
 	grid_midpoint = (grid_size - 1)/2;
 	h_sq = pow(l/(grid_size-1.0),2.0);
-	gamma = 2;
+	gamma = 1;
 
 	// Declaration of arrays
 	double** u; 
@@ -60,12 +60,41 @@ int main(){
 	FILE *file;
 	file = fopen("phi.data","w");
 
-	// Call the multigrid function
-	while (error >= pow(10,-5)){		
-		error = multigrid(u, rho, grid_size, gamma);
-		printf("Error: %.10f \n", error);
-	}
+	// Run the full multigrid 
+	printf("Grid size: %i \n",grid_size);
+	while (grid_size < max_grid_size){
+		while (error >= pow(10,-5)){		
+			error = multigrid(u, rho, grid_size, gamma);
+			//printf("Error: %.10f \n", error);
+		}
+		error = 1.0; 		
+		
+		//Increase gird size		
+		grid_size = increase_grid(u, grid_size);
+		
+		// Initiate a new rho for the new gridsize
+		grid_midpoint = (grid_size - 1)/2;
+		h_sq = pow(l/(grid_size-1.0),2.0);
+
+		for(i = 0; i < grid_size; i++){
+			for(j = 0; j < grid_size; j++){
+				rho[i][j] = 0.0;			
+			}
+		}
+
+		rho[grid_midpoint*4/5][grid_midpoint] = pow(h_sq,-1); //1/h^2
+		rho[grid_midpoint*6/5][grid_midpoint] = pow(-h_sq,-1);
+
+
 	
+		//printf("Grid size: %i \n",grid_size);
+	}
+	//Run multigrid for the largest size
+	error = 1.0; 
+	while (error >= pow(10,-6)){		
+		error = multigrid(u, rho, grid_size, gamma);
+		//printf("Error: %.10f \n", error);
+	}	
 	
 
 	
