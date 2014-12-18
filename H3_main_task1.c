@@ -28,8 +28,8 @@ int main(){
 	// Initiation of variables
 	error = 1.0; 
 	l = 1.0;
-	max_grid_size = 21; // Maximal grid size used in the simulation
-	grid_size = 21; // Smallest grid size: 11x11, next smallest grid size: 21x21 (Dynamic variable)
+	max_grid_size = 1281; // Maximal grid size used in the simulation
+	grid_size = 161; // Smallest grid size: 11x11, next smallest grid size: 21x21 (Dynamic variable)
 	grid_midpoint = (grid_size -1.0)/2.0;
 	h_sq = pow(l/(grid_size-1.0),2.0);
 	nbr_computations = 0;
@@ -119,11 +119,10 @@ int main(){
 
 			// Use Gauss-Seidel method, returns the error
 			error = gauss_seidel(u, rho, grid_size, &nbr_computations);
-
 		}
 
 	}
-
+	printf("Gridsize: %i Computations: %i\n",grid_size, nbr_computations);
 	// Print the final solution to a file
 	for(i = 0; i < grid_size; i++){
 		for(j = 0; j < grid_size; j++){
