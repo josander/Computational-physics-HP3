@@ -17,7 +17,7 @@ plot(0:1/(length(phi)-1):1,phi(:,(length(phi)-1)/2 +1))
 clc
 
 e6 = dlmread('phi_E6.data');
-xE6 = linspace(0, length(e6), length(e6));
+xE6 = linspace(0, 1, length(e6));
 
 figure(2);
 clf

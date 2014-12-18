@@ -22,15 +22,17 @@ int main(){
 	double error, it_error;
 	double h_sq;
 	int gamma;
+	int nbr_computations;
 
 	// Initiation of variables
 	error = 1.0; 
 	l = 1.0;
 	max_grid_size = 1281; // Maximal grid size used in the simulation
-	grid_size = 21; // (Dynamic variable)
+	grid_size = 41; // (Dynamic variable)
 	grid_midpoint = (grid_size - 1)/2;
 	h_sq = pow(l/(grid_size-1.0),2.0);
 	gamma = 2;
+	nbr_computations = 0;
 
 	// Declaration of arrays
 	double** u; 
@@ -62,12 +64,11 @@ int main(){
 
 	// Call the multigrid function
 	while (error >= pow(10,-5)){		
-		error = multigrid(u, rho, grid_size, gamma);
+		error = multigrid(u, rho, grid_size, gamma, &nbr_computations);
 		//printf("Error: %.10f \n", error);
 	}
 	
-	
-
+	printf("Computations: %i\n", nbr_computations);
 	
 	// Print the final solution to a file
 	for(i = 0; i < grid_size; i++){

@@ -14,21 +14,22 @@ gird_size = N*10 + 1
 #define MINGRID 11
 
 // Function for the Gauss-Seidel method for LAP(A) = B. Returns the maximal error. 
-double gauss_seidel(double **A, double **B, int grid_size){
+double gauss_seidel(double **A, double **B, int grid_size, int *nbr_computations){
 
 	
-	int i, j;
-
+	int i, j, nbr_comp;
 	int grid_midpoint = (grid_size - 1)/2;	
-	
 	double h_sq = pow(1.0/(grid_size - 1),2);
 	double temp;
 	double it_error = 0.0;
+
 
 	// Gauss-Seidel
 	for(i = 1; i < grid_size - 1; i++){
 		for(j = 1; j < grid_size - 1; j++){
 			
+			nbr_comp++;
+		
 			temp = A[i][j];
 			A[i][j] = 0.25 * (A[i+1][j] + A[i-1][j] + A[i][j+1] + A[i][j-1] - B[i][j]*h_sq);
 			
@@ -40,6 +41,8 @@ double gauss_seidel(double **A, double **B, int grid_size){
 			}
 		}
 	}
+
+	*nbr_computations += nbr_comp;
 
 	return(it_error);
 }
@@ -160,7 +163,7 @@ int decrease_grid(double **A, int grid_size){
 
 // Solves the Poisson equation LAP(A) = B through the multigrid method
 
-double multigrid(double **A, double **B, int grid_size, int gamma){
+double multigrid(double **A, double **B, int grid_size, int gamma, int *nbr_computations){
 	
 	double error = 1.0;
 	int i,j;
@@ -170,7 +173,7 @@ double multigrid(double **A, double **B, int grid_size, int gamma){
 	// If the most coarse grid, solve the equation using GS 
 	if (grid_size <= MINGRID){
 		while (error >= pow(10,-5)){		
-			error = gauss_seidel(A, B, grid_size);
+			error = gauss_seidel(A, B, grid_size, nbr_computations);
 			return(error);
 			
 		
@@ -202,7 +205,7 @@ double multigrid(double **A, double **B, int grid_size, int gamma){
 
 		// Presmooth A
 		for(i = 0; i < n_smooth; i++){
-			error = gauss_seidel(A, B, grid_size);	
+			error = gauss_seidel(A, B, grid_size, nbr_computations);	
 		}
 		
 		// Calculate the residual
@@ -215,7 +218,7 @@ double multigrid(double **A, double **B, int grid_size, int gamma){
 	
 		// Recursive solution to the residual equation
 		for(i = 0; i < gamma; i++){		
-			error = multigrid(res_error, res, grid_size, gamma);
+			error = multigrid(res_error, res, grid_size, gamma, nbr_computations);
 			
 		}
 		
@@ -232,7 +235,7 @@ double multigrid(double **A, double **B, int grid_size, int gamma){
 		
 		// Postsmooth A
 		for(i = 0; i < n_smooth; i++){
-			error = gauss_seidel(A, B, grid_size);	
+			error = gauss_seidel(A, B, grid_size, nbr_computations);	
 		}
 		
 

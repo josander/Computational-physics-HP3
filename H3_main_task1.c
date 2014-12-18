@@ -21,6 +21,7 @@ int main(){
 	int max_grid_size, grid_size, grid_midpoint; // error and temp gridsize
 	double error, it_error;
 	double h_sq;
+	int nbr_computations;
 
 	// Initiation of variables
 	error = 1.0; 
@@ -29,6 +30,7 @@ int main(){
 	grid_size = 21; // Smallest grid size: 11x11, next smallest grid size: 21x21 (Dynamic variable)
 	grid_midpoint = (grid_size -1.0)/2.0;
 	h_sq = pow(l/(grid_size-1.0),2.0);
+	nbr_computations = 0;
 
 	// Declaration of arrays
 	double** u; 
@@ -80,7 +82,13 @@ int main(){
 		for(i = 0; i < 3; i++){
 
 			// Use Gauss-Seidel method, returns the error
+<<<<<<< HEAD
 			error = gauss_seidel(u, rho, grid_size);
+=======
+			error = gauss_seidel(u, rho, grid_size, &nbr_computations);
+			
+
+>>>>>>> 8128d1137f155e9d950c8534eef942abdc99d450
 		}
 		
 		// Compute residual
@@ -93,7 +101,7 @@ int main(){
 		// Solve the residual equation to 10^-5
 		it_error = 1.0;		
 		while(it_error >= pow(10,-5)){
-			it_error = gauss_seidel(residual, res_error, grid_size);
+			it_error = gauss_seidel(residual, res_error, grid_size, &nbr_computations);
 
 		
 		}
@@ -112,8 +120,15 @@ int main(){
 		// Again, use Gauss-Seidel method to iterate three times
 		for(i = 0; i < 3; i++){
 			// Use Gauss-Seidel method, returns the error
+<<<<<<< HEAD
 			error = gauss_seidel(u, rho, grid_size);
 		}
+=======
+			error = gauss_seidel(u, rho, grid_size, &nbr_computations);
+
+		}
+
+>>>>>>> 8128d1137f155e9d950c8534eef942abdc99d450
 	}
 
 	// Print the final solution to a file
