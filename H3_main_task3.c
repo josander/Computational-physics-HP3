@@ -30,7 +30,7 @@ int main(){
 	error = 1.0; 
 	l = 1.0;
 
-	max_grid_size = 641;
+	max_grid_size = 81;
 	grid_size = 11; 
 
 	grid_midpoint = (grid_size - 1)/2;
@@ -61,14 +61,9 @@ int main(){
 	rho[grid_midpoint*4/5][grid_midpoint] = pow(h_sq,-1); //1/h^2
 	rho[grid_midpoint*6/5][grid_midpoint] = pow(-h_sq,-1);
 
-
 	// File to save data
 	FILE *file;
 	file = fopen("phi.data","w");
-
-
-	// Print in the terminal
-	printf("Grid size: %i \n",grid_size);
 
 	// Run the full multigrid 
 	while (grid_size < max_grid_size){

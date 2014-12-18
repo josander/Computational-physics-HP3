@@ -29,7 +29,7 @@ int main(){
 	// Initiation of variables
 	error = 1.0; 
 	l = 1.0;
-	max_grid_size = 1281;
+	max_grid_size = 81;
 	grid_size = 81;
 	grid_midpoint = (grid_size - 1)/2;
 	h_sq = pow(l/(grid_size-1.0),2.0);
@@ -64,12 +64,11 @@ int main(){
 	FILE *file;
 	file = fopen("phi.data","w");
 
-	printf("Grid size: %i\n", grid_size);
+	//printf("Grid size: %i\n", grid_size);
 
 	// Call the multigrid function
 	while (error >= pow(10,-5)){		
 		error = multigrid(u, rho, grid_size, gamma, &nbr_computations);
-		error = 0;
 	}
 	
 
