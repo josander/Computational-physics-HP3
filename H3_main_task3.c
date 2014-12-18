@@ -87,15 +87,13 @@ int main(){
 		rho[grid_midpoint*4/5][grid_midpoint] = pow(h_sq,-1); //1/h^2
 		rho[grid_midpoint*6/5][grid_midpoint] = pow(-h_sq,-1);
 
-
-	
-		//printf("Grid size: %i \n",grid_size);
 	}
 	//Run multigrid for the largest size
 	error = 1.0; 
 	while (error >= pow(10,-6)){		
 		error = multigrid(u, rho, grid_size, gamma, &nbr_computations);
 		//printf("Error: %.10f \n", error);
+
 	}	
 	
 
