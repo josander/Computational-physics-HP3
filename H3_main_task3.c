@@ -27,7 +27,7 @@ int main(){
 	// Initiation of variables
 	error = 1.0; 
 	l = 1.0;
-	max_grid_size = 641; // Maximal grid size used in the simulation
+	max_grid_size = 1281; // Maximal grid size used in the simulation
 	grid_size = 11; // (Dynamic variable)
 	grid_midpoint = (grid_size - 1)/2;
 	h_sq = pow(l/(grid_size-1.0),2.0);
@@ -63,7 +63,6 @@ int main(){
 	file = fopen("phi.data","w");
 
 	// Run the full multigrid 
-	printf("Grid size: %i \n",grid_size);
 	while (grid_size < max_grid_size){
 		while (error >= pow(10,-5)){		
 			error = multigrid(u, rho, grid_size, gamma, &nbr_computations);
@@ -97,7 +96,7 @@ int main(){
 	}	
 	
 
-	
+	printf("Gridsize: %i Computations: %i\n",grid_size, nbr_computations);
 	// Print the final solution to a file
 	for(i = 0; i < grid_size; i++){
 		for(j = 0; j < grid_size; j++){

@@ -28,7 +28,7 @@ int main(){
 	error = 1.0; 
 	l = 1.0;
 	max_grid_size = 1281; // Maximal grid size used in the simulation
-	grid_size = 41; // (Dynamic variable)
+	grid_size = 1281; // (Dynamic variable)
 	grid_midpoint = (grid_size - 1)/2;
 	h_sq = pow(l/(grid_size-1.0),2.0);
 	gamma = 2;
@@ -68,7 +68,7 @@ int main(){
 		//printf("Error: %.10f \n", error);
 	}
 	
-	printf("Computations: %i\n", nbr_computations);
+	printf("Gridsize: %i Computations: %i\n",grid_size, nbr_computations);
 	
 	// Print the final solution to a file
 	for(i = 0; i < grid_size; i++){
