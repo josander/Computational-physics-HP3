@@ -214,6 +214,7 @@ double multigrid(double **A, double **B, int grid_size, int gamma, int *nbr_comp
 
 		// Decrease the grid size of res
 		grid_size = decrease_grid(res, grid_size);
+		printf("Grid size: %i\n", grid_size);
 	
 		// Recursive solution to the residual equation
 		for(i = 0; i < gamma; i++){		
@@ -222,6 +223,7 @@ double multigrid(double **A, double **B, int grid_size, int gamma, int *nbr_comp
 		
 		// Increas res_error to original size of A 
 		grid_size = increase_grid(res_error, grid_size);
+		printf("Grid size: %i\n", grid_size);
 
 
 		// Update A with the error
