@@ -9,7 +9,7 @@ Contains functions for homeproblem 3/b
 #include <stdio.h>
 #include <math.h>
 #define PI 3.141592653589
-#define MINGRID 11
+#define MINGRID 11 //lowest possible gridsize using our Rho
 
 // Function for the Gauss-Seidel method for LAP(A) = B. Returns the maximal absolute differance between iterations. 
 double gauss_seidel(double **A, double **B, int grid_size, int *nbr_computations){

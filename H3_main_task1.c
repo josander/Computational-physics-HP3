@@ -73,7 +73,7 @@ int main(){
 	file = fopen("phi.data","w");
 
 	// Until abs_diff < 10^(-5)
-	while(abs_diff >= pow(10,-6)){
+	while(abs_diff >= pow(10,-5)){
 
 		// Put the res and res_error to zero at each iteration
 		for(i = 0; i < grid_size; i++){
