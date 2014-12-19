@@ -1,9 +1,7 @@
 /*
 func.c
 Contains functions for homeproblem 3/b
-
-Note that the code only functions properly for 
-gird_size = N*10 + 1 
+ 
 
 */
 
@@ -11,9 +9,9 @@ gird_size = N*10 + 1
 #include <stdio.h>
 #include <math.h>
 #define PI 3.141592653589
-#define MINGRID 11
+#define MINGRID 11 //lowest possible gridsize using our Rho
 
-// Function for the Gauss-Seidel method for LAP(A) = B. Returns the maximal error. 
+// Function for the Gauss-Seidel method for LAP(A) = B. Returns the maximal absolute differance between iterations. 
 double gauss_seidel(double **A, double **B, int grid_size, int *nbr_computations){
 
 	
@@ -21,7 +19,7 @@ double gauss_seidel(double **A, double **B, int grid_size, int *nbr_computations
 	int grid_midpoint = (grid_size - 1)/2;	
 	double h_sq = pow(1.0/(grid_size - 1),2);
 	double temp;
-	double it_error = 0.0;
+	double abs_diff = 0.0;
 
 
 	// Gauss-Seidel
@@ -33,9 +31,9 @@ double gauss_seidel(double **A, double **B, int grid_size, int *nbr_computations
 			temp = A[i][j];
 			A[i][j] = 0.25 * (A[i+1][j] + A[i-1][j] + A[i][j+1] + A[i][j-1] - B[i][j]*h_sq);
 			
-			// Calculate maximal error
-			if(fabs(A[i][j] - temp) > it_error){
-				it_error = fabs(A[i][j] - temp);
+			// Calculate maximal abs_diff
+			if(fabs(A[i][j] - temp) > abs_diff){
+				abs_diff = fabs(A[i][j] - temp);
 			
 				
 			}
@@ -44,7 +42,7 @@ double gauss_seidel(double **A, double **B, int grid_size, int *nbr_computations
 
 	*nbr_computations += nbr_comp;
 
-	return(it_error);
+	return(abs_diff);
 }
 //Function that calculates the residual of LAP(A) = B
 void get_residual(double **A, double **B , double **res, int grid_size){
@@ -166,16 +164,16 @@ int decrease_grid(double **A, int grid_size){
 
 double multigrid(double **A, double **B, int grid_size, int gamma, int *nbr_computations){
 	
-	double error = 1.0;
+	double abs_diff = 1.0;
 	int i,j;
 	int n_smooth = 5;
 	
 
 	// If the most coarse grid, solve the equation using GS 
 	if (grid_size <= MINGRID){
-		while (error >= pow(10,-5)){		
-			error = gauss_seidel(A, B, grid_size, nbr_computations);
-			return(error);
+		while (abs_diff >= pow(10,-5)){		
+			abs_diff = gauss_seidel(A, B, grid_size, nbr_computations);
+			return(abs_diff);
 			
 		
 		}
@@ -206,7 +204,7 @@ double multigrid(double **A, double **B, int grid_size, int gamma, int *nbr_comp
 
 		// Presmooth A
 		for(i = 0; i < n_smooth; i++){
-			error = gauss_seidel(A, B, grid_size, nbr_computations);	
+			abs_diff = gauss_seidel(A, B, grid_size, nbr_computations);	
 		}
 		
 		// Calculate the residual
@@ -218,7 +216,7 @@ double multigrid(double **A, double **B, int grid_size, int gamma, int *nbr_comp
 	
 		// Recursive solution to the residual equation
 		for(i = 0; i < gamma; i++){		
-			error = multigrid(res_error, res, grid_size, gamma, nbr_computations);
+			abs_diff = multigrid(res_error, res, grid_size, gamma, nbr_computations);
 		}
 		
 		// Increas res_error to original size of A 
@@ -235,7 +233,7 @@ double multigrid(double **A, double **B, int grid_size, int gamma, int *nbr_comp
 		
 		// Postsmooth A
 		for(i = 0; i < n_smooth; i++){
-			error = gauss_seidel(A, B, grid_size, nbr_computations);	
+			abs_diff = gauss_seidel(A, B, grid_size, nbr_computations);	
 		}
 		
 
@@ -248,7 +246,7 @@ double multigrid(double **A, double **B, int grid_size, int gamma, int *nbr_comp
 		free(res); free(res_error);
 		res = NULL; res_error = NULL;
 
-		return(error);
+		return(abs_diff);
 	}
 
 

@@ -3,6 +3,9 @@
 
 Main program for task 1 in HP3b. To compile this main-program, make sure to change the makefile. 
 
+Note that the code only functions properly for 
+gird_size = 10*2^x +1 due to the Rho used.
+
  */
 
 #include <stdio.h>
@@ -21,12 +24,12 @@ int main(){
 	int max_grid_size; // Maximum grid size during the whole simulation 
 	int grid_size; // Start grid size (Dynamic variable during the simulation)
 	int grid_midpoint;
-	double error, it_error;
+	double abs_diff, it_abs_diff;
 	double h_sq;
 	int nbr_computations; // Calculated how many Gauss-Seidel computations that are done
 
 	// Initiation of variables
-	error = 1.0; 
+	abs_diff = 1.0; 
 	l = 1.0;
 	max_grid_size = 1281; // Maximal grid size used in the simulation
 	grid_size = 161; // Smallest grid size: 11x11, next smallest grid size: 21x21 (Dynamic variable)
@@ -69,8 +72,8 @@ int main(){
 	FILE *file;
 	file = fopen("phi.data","w");
 
-	// Until error < 10^(-5)
-	while(error >= pow(10,-6)){
+	// Until abs_diff < 10^(-5)
+	while(abs_diff >= pow(10,-5)){
 
 		// Put the res and res_error to zero at each iteration
 		for(i = 0; i < grid_size; i++){
@@ -83,8 +86,8 @@ int main(){
 		// Iterate Gauss-Seidel relaxation three times
 		for(i = 0; i < 3; i++){
 
-			// Use Gauss-Seidel method, returns the error
-			error = gauss_seidel(u, rho, grid_size, &nbr_computations);
+			// Use Gauss-Seidel method, returns the abs_diff
+			abs_diff = gauss_seidel(u, rho, grid_size, &nbr_computations);
 
 		}
 		
@@ -96,9 +99,9 @@ int main(){
 		grid_size = decrease_grid(residual, grid_size);
 
 		// Solve the residual equation to 10^-5
-		it_error = 1.0;		
-		while(it_error >= pow(10,-5)){
-			it_error = gauss_seidel(residual, res_error, grid_size, &nbr_computations);
+		it_abs_diff = 1.0;		
+		while(it_abs_diff >= pow(10,-5)){
+			it_abs_diff = gauss_seidel(residual, res_error, grid_size, &nbr_computations);
 
 		
 		}
@@ -117,8 +120,8 @@ int main(){
 		// Again, use Gauss-Seidel method to iterate three times
 		for(i = 0; i < 3; i++){
 
-			// Use Gauss-Seidel method, returns the error
-			error = gauss_seidel(u, rho, grid_size, &nbr_computations);
+			// Use Gauss-Seidel method, returns the abs_diff
+			abs_diff = gauss_seidel(u, rho, grid_size, &nbr_computations);
 		}
 
 	}
