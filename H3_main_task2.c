@@ -3,6 +3,9 @@
 
 Main program for task 2 in HP3b. To compile this main-program, make sure to change the makefile. 
 
+Note that the code only functions properly for 
+gird_size = 10*2^x +1 due to the Rho used.
+
  */
 
 #include <stdio.h>
@@ -21,13 +24,13 @@ int main(){
 	int max_grid_size; // Maximum grid size during the whole simulation 
 	int grid_size; // Start grid size (Dynamic variable during the simulation)
 	int grid_midpoint;
-	double error, it_error;
+	double abs_diff, it_abs_diff;
 	double h_sq;
 	int gamma;
 	int nbr_computations; // Calculated how many Gauss-Seidel computations that are done
 
 	// Initiation of variables
-	error = 1.0; 
+	abs_diff = 1.0; 
 	l = 1.0;
 	max_grid_size = 81;
 	grid_size = 81;
@@ -67,8 +70,8 @@ int main(){
 	//printf("Grid size: %i\n", grid_size);
 
 	// Call the multigrid function
-	while (error >= pow(10,-5)){		
-		error = multigrid(u, rho, grid_size, gamma, &nbr_computations);
+	while (abs_diff >= pow(10,-5)){		
+		abs_diff = multigrid(u, rho, grid_size, gamma, &nbr_computations);
 	}
 	
 
