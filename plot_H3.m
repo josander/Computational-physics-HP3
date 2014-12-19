@@ -174,8 +174,6 @@ plotTickLatex2D
 l = legend('Exact solution','J = 21','J = 81','J = 321','J = 1281');
 set(l,'Location','NorthWest')
 
-
-<<<<<<< HEAD
 set(x, 'Units', 'Normalized', 'Position', [0.5, -0.06, 0]);
 print(gcf,'-depsc2','FMGN.eps')
 clf
@@ -191,7 +189,6 @@ l = legend('Exact solution','J = 21','J = 81','J = 321','J = 1281');
 set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.5, 0]);
 set(x, 'Units', 'Normalized', 'Position', [0.5, -0.06, 0]);
 print(gcf,'-depsc2','FMGN2.eps')
-=======
 %% Nice cycle-plots
 clc
 clf
@@ -219,4 +216,3 @@ plotTickLatex2D
 
 set(y, 'Units', 'Normalized', 'Position', [-0.1, 0.5, 0]);
 print(gcf,'-depsc2','cycles.eps')
->>>>>>> c349f94f83cf5478240369a139791248e043424c
